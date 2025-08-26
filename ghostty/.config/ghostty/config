@@ -1,3 +1,8 @@
 theme = "tokyonight_night"
 background-opacity = 0.9
 background-blur-radius = 20
+
+# Cursor configuration
+cursor-style = bar
+cursor-style-blink = true
+cursor-thickness = 2
