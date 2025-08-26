@@ -50,6 +50,8 @@ set -sg escape-time 0
 set -g @plugin 'tmux-plugins/tpm'
 set -g @plugin 'tmux-plugins/tmux-sensible'
 set -g @plugin 'christoomey/vim-tmux-navigator'
+set -g @plugin 'tmux-plugins/tmux-online-status'
+set -g @plugin 'tmux-plugins/tmux-battery'
 
 # Tokyo Night Theme Plugin
 set -g @plugin 'fabioluciano/tmux-tokyo-night'
@@ -58,12 +60,14 @@ set -g @plugin 'fabioluciano/tmux-tokyo-night'
 set -g @theme_variation 'night'
 set -g @theme_left_separator ''
 set -g @theme_right_separator ''
-set -g @theme_plugins 'datetime,battery'
-set -g @theme_disable_plugins 0
 
-# Status bar configuration (let Tokyo Night theme handle styling)
+# Status bar configuration
 set -g status-left-length 100
 set -g status-right-length 100
+
+# Configure Online status icons
+set -g @online_icon "✓"
+set -g @offline_icon "✗"
 
 # Window style configuration
 set -wg automatic-rename on
