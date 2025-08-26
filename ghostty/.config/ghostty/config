@@ -1,5 +1,5 @@
 theme = "tokyonight_night"
-background-opacity = 0.9
+background-opacity = 0.8
 background-blur-radius = 20
 
 # Cursor configuration

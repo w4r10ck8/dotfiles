@@ -19,5 +19,12 @@ Thumbs.db
 *.tmp
 *.temp
 
+# Tmux plugins (managed by TPM)
+tmux/.config/tmux/plugins/
+
+# Backup files
+*.backup
+*.clean
+
 # Personal/sensitive files (add any files you don't want to share)
 # Add any personal API keys, tokens, or sensitive configs here
