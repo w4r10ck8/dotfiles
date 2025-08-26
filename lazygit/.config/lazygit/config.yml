@@ -1,0 +1,6 @@
+customCommands:
+  - key: "C"
+    context: "global"
+    command: "code ."
+    description: "Open VS Code"
+    output: terminal
