@@ -2,6 +2,10 @@ theme = "tokyonight_night"
 background-opacity = 0.8
 background-blur-radius = 20
 
+# Font configuration - using SF Mono to match Neovim
+font-family = "SF Mono"
+font-size = 14
+
 # Cursor configuration
 cursor-style = bar
 cursor-style-blink = true
