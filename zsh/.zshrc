@@ -2,20 +2,24 @@
 # ZSH Configuration
 # =============================================================================
 
-# Path configuration
-export PATH=$HOME/bin:/usr/local/bin:$PATH
+# Path configuration - ensure system paths are first
+export PATH="/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:$HOME/bin:$PATH"
 
 # Oh My Zsh configuration
 export ZSH="$HOME/.oh-my-zsh"
 
-# Lazy load NVM for faster startup
+# Load NVM properly
 export NVM_DIR="$HOME/.nvm"
-nvm() {
-    unset -f nvm
-    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-    nvm "$@"
-}
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# Application configurations
+export LG_CONFIG_FILE="$HOME/.config/lazygit/config.yml"
+
+# Load NVM properly
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # Application configurations
 export LG_CONFIG_FILE="$HOME/.config/lazygit/config.yml"
@@ -24,7 +28,7 @@ export LG_CONFIG_FILE="$HOME/.config/lazygit/config.yml"
 plugins=(
   git
   bundler
-  dotenv
+  # dotenv  # Temporarily disabled due to PATH issues
   macos
   rake
   rbenv
@@ -76,10 +80,10 @@ fi
 # FZF key bindings and completions
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-# Custom key bindings
-bindkey '^P' fzf_projects      # Ctrl+P for project switcher
-bindkey '^F' fzf_edit         # Ctrl+F for file finder
-bindkey '^G' fzf_grep         # Ctrl+G for live grep
+# Custom key bindings (widgets registered after function definitions)
+# bindkey '^P' fzf_projects      # Ctrl+P for project switcher  
+# bindkey '^F' fzf_edit         # Ctrl+F for file finder
+# bindkey '^G' fzf_grep         # Ctrl+G for live grep
 
 # =============================================================================
 # Custom FZF Functions
@@ -195,6 +199,16 @@ fzf_kill() {
 # FZF Aliases & Key Bindings
 # =============================================================================
 
+# Register custom functions as ZLE widgets and bind keys
+zle -N fzf_projects
+zle -N fzf_edit  
+zle -N fzf_grep
+
+# Key bindings for fzf functions
+bindkey '^P' fzf_projects      # Ctrl+P for project switcher
+bindkey '^F' fzf_edit         # Ctrl+F for file finder
+bindkey '^G' fzf_grep         # Ctrl+G for live grep
+
 # Main fzf aliases
 alias fp="fzf_projects"           # Project switcher
 alias ff="fzf_edit"               # File finder & editor
@@ -212,7 +226,10 @@ alias ...="cd ../.."
 alias ....="cd ../../.."
 
 # General aliases
-alias cls="colorls"
+alias cls="eza --color=always --long --git --no-filesize --icons=always --no-time --no-user --no-permissions"
+alias ll="eza --color=always --long --git --icons=always"
+alias la="eza --color=always --long --git --icons=always --all"
+alias lt="eza --color=always --tree --icons=always"
 alias or="omz reload"
 alias myip='ipconfig getifaddr en0'
 alias kode="nvim ."
@@ -282,10 +299,19 @@ project_cd() {
     local path="$1"
     local use_nvm="${2:-false}"
     
-    if [[ "$use_nvm" == "true" ]]; then
-        cd "$path" && nvm use
-    else
-        cd "$path"
+    # Ensure proper PATH before any operations  
+    export PATH="/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/opt/homebrew/bin:$PATH"
+    
+    cd "$path"
+    echo "📁 Switched to: $path"
+    
+    if [[ "$use_nvm" == "true" && -f .nvmrc ]]; then
+        echo "� Node version file found, switching Node version..."
+        # Try to use nvm directly first, fallback to bash if needed
+        if ! nvm use 2>/dev/null; then
+            echo "⚠️  NVM direct call failed, trying alternative method..."
+            /bin/bash -c "export PATH=\"$PATH\"; source \"$NVM_DIR/nvm.sh\"; nvm use" 2>/dev/null || echo "❌ Could not switch Node version. Run 'nvm use' manually."
+        fi
     fi
 }
 
@@ -304,14 +330,22 @@ alias p.cp="project_cd '$DEV_EXCO/CustomerPortal' true"
 alias p.ncp="project_cd '$DEV_EXCO/csp-npm/csp-npm' true"
 alias p.repair="project_cd '$DEV_EXCO/script-csp-repairo' true"
 
-# Tmux variants for Node/Exco projects
-alias t.p.spellbook="p.spellbook && tmux"
-alias t.p.judgement="p.judgement && tmux"
-alias t.p.folio="p.folio && tmux"
-alias t.p.bt="p.bt && tmux"
-alias t.p.cp="p.cp && tmux"
-alias t.p.ncp="p.ncp && tmux"
-alias t.p.repair="p.repair && tmux"
+# Tmux variants for Node/Exco projects  
+tmux_project() {
+    local project_alias="$1"
+    eval "$project_alias"
+    if [[ $? -eq 0 ]]; then
+        tmux new-session -s "$(basename $(pwd))" 2>/dev/null || tmux attach-session -t "$(basename $(pwd))"
+    fi
+}
+
+alias t.p.spellbook="tmux_project p.spellbook"
+alias t.p.judgement="tmux_project p.judgement"  
+alias t.p.folio="tmux_project p.folio"
+alias t.p.bt="tmux_project p.bt"
+alias t.p.cp="tmux_project p.cp"
+alias t.p.ncp="tmux_project p.ncp"
+alias t.p.repair="tmux_project p.repair"
 
 # =============================================================================
 # Environment Variables & Tokens
@@ -328,11 +362,91 @@ alias t.p.repair="p.repair && tmux"
 # export ANDROID_AVD_HOME="$HOME/.android/avd"
 
 # =============================================================================
-# Initialize Tools
+# FZF Integration & Custom Functions
 # =============================================================================
 
-# Colorls tab completion
-source $(dirname $(gem which colorls))/tab_complete.sh
+# Initialize fzf
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# Set FZF colors to Tokyo Night theme
+export FZF_DEFAULT_OPTS="
+  --color=fg:#c0caf5,bg:#1a1b26,hl:#7aa2f7
+  --color=fg+:#c0caf5,bg+:#292e42,hl+:#7dcfff
+  --color=info:#7aa2f7,prompt:#7dcfff,pointer:#7dcfff
+  --color=marker:#9ece6a,spinner:#9ece6a,header:#9ece6a
+  --border --height 60% --layout=reverse
+  --prompt='❯ ' --pointer='❯' --marker='❯'
+  --bind 'ctrl-a:select-all'
+  --bind 'ctrl-y:execute-silent(echo {} | pbcopy)'
+  --bind 'ctrl-e:execute(echo {+} | xargs -o nvim)'
+  --bind 'ctrl-v:execute(code {+})'
+"
+
+# Set FZF to use fd for file search (faster and respects .gitignore)
+export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git --exclude node_modules'
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+
+# FZF function to find and switch to project directories
+function fzf-project-widget() {
+  local selected
+  selected=$(find ~/Projects ~/work ~/dev -type d -name ".git" 2>/dev/null | 
+    sed 's|/.git||' | 
+    sed "s|$HOME|~|" | 
+    sort | 
+    fzf --header="📁 Select Project" \
+        --preview="eza --tree --level=2 --color=always {}" \
+        --preview-window=right:50%:wrap)
+  
+  if [[ -n $selected ]]; then
+    # Expand ~ to home directory
+    selected=${selected/#\~/$HOME}
+    cd "$selected"
+    zle reset-prompt
+  fi
+}
+zle -N fzf-project-widget
+
+# FZF function to find files in current directory
+function fzf-file-widget() {
+  local selected
+  selected=$(fd --type f --hidden --follow --exclude .git --exclude node_modules | 
+    fzf --header="📄 Select File" \
+        --preview="bat --color=always --style=numbers --line-range=:500 {}" \
+        --preview-window=right:60%:wrap)
+  
+  if [[ -n $selected ]]; then
+    LBUFFER="${LBUFFER}${selected}"
+    zle reset-prompt
+  fi
+}
+zle -N fzf-file-widget
+
+# FZF function to search git commits
+function fzf-git-commits() {
+  git log --oneline --color=always --all --graph | 
+  fzf --ansi --no-sort --reverse --tiebreak=index \
+      --header="🔍 Git Commits" \
+      --preview="echo {} | grep -o '[a-f0-9]\{7\}' | head -1 | xargs git show --color=always" \
+      --preview-window=right:60%:wrap
+}
+
+# FZF function to search processes
+function fzf-processes() {
+  ps aux | 
+  fzf --header="🔄 Running Processes" \
+      --height=50% \
+      --preview="echo {}" \
+      --preview-window=down:3:wrap \
+      --bind="enter:execute(kill -9 {2})"
+}
+
+# Key bindings for FZF widgets
+bindkey '^P' fzf-project-widget  # Ctrl+P for projects
+bindkey '^F' fzf-file-widget     # Ctrl+F for files
+
+# =============================================================================
+# Initialize Tools
+# =============================================================================
 
 # Initialize Starship prompt (should be last)
 eval "$(starship init zsh)"
