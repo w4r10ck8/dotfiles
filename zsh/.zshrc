@@ -294,23 +294,99 @@ alias d.dev="cd $DEV_BASE"
 alias d.projects="cd $DEV_PROJECTS"
 alias d.exco="cd $DEV_EXCO"
 
-# Helper function for project aliases
+# Helper function for project aliases with enhanced messaging
 project_cd() {
     local path="$1"
     local use_nvm="${2:-false}"
     
-    # Ensure proper PATH before any operations  
-    export PATH="/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/opt/homebrew/bin:$PATH"
+    # Check if directory exists
+    if [[ ! -d "$path" ]]; then
+        echo "❌ \033[91mDirectory not found:\033[0m $path"
+        return 1
+    fi
     
     cd "$path"
-    echo "📁 Switched to: $path"
+    echo "📁 \033[92mSwitched to:\033[0m \033[94m$path\033[0m"
     
+    # Check for various project files and show info
+    if [[ -f "package.json" ]]; then
+        # Pure zsh parsing using parameter expansion
+        local json_content=$(< package.json)
+        local project_name="Unknown"
+        local project_version="Unknown"
+        
+        # Extract name using zsh parameter expansion
+        if [[ $json_content =~ '"name"[[:space:]]*:[[:space:]]*"([^"]+)"' ]]; then
+            project_name=${match[1]}
+        fi
+        
+        # Extract version using zsh parameter expansion  
+        if [[ $json_content =~ '"version"[[:space:]]*:[[:space:]]*"([^"]+)"' ]]; then
+            project_version=${match[1]}
+        fi
+        
+        echo "📦 \033[93mNode.js project:\033[0m $project_name \033[90mv$project_version\033[0m"
+    fi
+    
+    if [[ -f "Cargo.toml" ]]; then
+        echo "🦀 \033[93mRust project detected\033[0m"
+    fi
+    
+    if [[ -f "go.mod" ]]; then
+        echo "🐹 \033[93mGo project detected\033[0m"
+    fi
+    
+    if [[ -f "requirements.txt" ]] || [[ -f "pyproject.toml" ]] || [[ -f "setup.py" ]]; then
+        echo "🐍 \033[93mPython project detected\033[0m"
+    fi
+    
+    # Handle NVM switching with better messaging
     if [[ "$use_nvm" == "true" && -f .nvmrc ]]; then
-        echo "� Node version file found, switching Node version..."
-        # Try to use nvm directly first, fallback to bash if needed
-        if ! nvm use 2>/dev/null; then
-            echo "⚠️  NVM direct call failed, trying alternative method..."
-            /bin/bash -c "export PATH=\"$PATH\"; source \"$NVM_DIR/nvm.sh\"; nvm use" 2>/dev/null || echo "❌ Could not switch Node version. Run 'nvm use' manually."
+        # Read .nvmrc file using built-in shell functionality
+        local required_version
+        read -r required_version < .nvmrc 2>/dev/null || required_version="Unknown"
+        # Clean up the version string using parameter expansion
+        required_version=${required_version//[^a-zA-Z0-9.]/}
+        [[ -n "$required_version" ]] || required_version="Unknown"
+        echo "🔄 \033[96mNode version file found, switching to Node $required_version...\033[0m"
+        
+        # Clean PATH temporarily to ensure system commands work
+        local old_path="$PATH"
+        export PATH="/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/opt/homebrew/bin"
+        
+        # Show our enhanced message first
+        echo "🔍 \033[96mFound .nvmrc with version <$required_version>\033[0m"
+        
+        # Try to use nvm (it should already be loaded in the shell)
+        if command -v nvm >/dev/null 2>&1 && nvm use >/dev/null 2>&1; then
+            # Restore PATH and get version info
+            export PATH="$old_path"
+            local current_version=$(nvm current 2>/dev/null)
+            local npm_version=$(npm --version 2>/dev/null)
+            
+            if [[ -n "$current_version" && -n "$npm_version" ]]; then
+                echo "🚀 \033[92mNow using node $current_version (npm v$npm_version)\033[0m"
+                echo "✅ \033[92mSuccessfully switched to Node $current_version\033[0m"
+            else
+                echo "✅ \033[92mSuccessfully switched to Node $required_version\033[0m"
+            fi
+        else
+            # Restore PATH and show error
+            export PATH="$old_path"
+            echo "❌ \033[91mCould not switch to Node $required_version. Please run 'nvm use' manually.\033[0m"
+        fi
+    fi
+    
+    # Show git branch if in a git repository
+    if git rev-parse --git-dir > /dev/null 2>&1; then
+        local branch=$(git branch --show-current 2>/dev/null)
+        local git_changes=$(git status --porcelain 2>/dev/null | wc -l | tr -d ' ')
+        if [[ -n "$branch" ]]; then
+            if [[ "$git_changes" -gt 0 ]]; then
+                echo "🌿 \033[93mGit branch:\033[0m \033[94m$branch\033[0m \033[91m($git_changes changes)\033[0m"
+            else
+                echo "🌿 \033[93mGit branch:\033[0m \033[94m$branch\033[0m \033[92m(clean)\033[0m"
+            fi
         fi
     fi
 }
@@ -386,58 +462,288 @@ export FZF_DEFAULT_OPTS="
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git --exclude node_modules'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
-# FZF function to find and switch to project directories
+# FZF function to find and switch to project directories with enhanced messaging
 function fzf-project-widget() {
+  echo "🔍 \033[96mSearching for projects...\033[0m"
+  
   local selected
-  selected=$(find ~/Projects ~/work ~/dev -type d -name ".git" 2>/dev/null | 
+  selected=$(find ~/Projects ~/work ~/dev ~/Developer -type d -name ".git" 2>/dev/null | 
     sed 's|/.git||' | 
     sed "s|$HOME|~|" | 
     sort | 
-    fzf --header="📁 Select Project" \
-        --preview="eza --tree --level=2 --color=always {}" \
-        --preview-window=right:50%:wrap)
+    fzf --header="📁 Select Project to Switch To" \
+        --prompt="❯ " \
+        --preview="eza --tree --level=2 --color=always {} 2>/dev/null || ls -la {}" \
+        --preview-window=right:50%:wrap \
+        --height=80%)
   
   if [[ -n $selected ]]; then
     # Expand ~ to home directory
     selected=${selected/#\~/$HOME}
+    echo "🚀 \033[95mSwitching to project...\033[0m"
+    
+    # Use our enhanced project_cd function with NVM detection
+    local use_nvm="false"
+    if [[ -f "$selected/.nvmrc" ]]; then
+      use_nvm="true"
+    fi
+    
+    # Change directory with enhanced messaging
+    if [[ ! -d "$selected" ]]; then
+        echo "❌ \033[91mDirectory not found:\033[0m $selected"
+        zle reset-prompt
+        return 1
+    fi
+    
     cd "$selected"
+    echo "📁 \033[92mSwitched to:\033[0m \033[94m$selected\033[0m"
+    
+    # Check for various project files and show info
+    if [[ -f "package.json" ]]; then
+        local project_name=$(command jq -r '.name // "Unknown"' package.json 2>/dev/null || echo "Unknown")
+        local project_version=$(command jq -r '.version // "Unknown"' package.json 2>/dev/null || echo "Unknown")
+        echo "📦 \033[93mNode.js project:\033[0m $project_name \033[90mv$project_version\033[0m"
+    fi
+    
+    if [[ -f "Cargo.toml" ]]; then
+        echo "🦀 \033[93mRust project detected\033[0m"
+    fi
+    
+    if [[ -f "go.mod" ]]; then
+        echo "🐹 \033[93mGo project detected\033[0m"
+    fi
+    
+    if [[ -f "requirements.txt" ]] || [[ -f "pyproject.toml" ]] || [[ -f "setup.py" ]]; then
+        echo "🐍 \033[93mPython project detected\033[0m"
+    fi
+    
+    # Handle NVM switching if .nvmrc exists
+    if [[ "$use_nvm" == "true" ]]; then
+        # Read .nvmrc file using built-in shell functionality
+        local required_version
+        read -r required_version < .nvmrc 2>/dev/null || required_version="Unknown"
+        # Clean up the version string using parameter expansion
+        required_version=${required_version//[^a-zA-Z0-9.]/}
+        echo "🔄 \033[96mNode version file found, switching to Node $required_version...\033[0m"
+        echo "🔍 \033[96mFound .nvmrc with version <$required_version>\033[0m"
+        
+        # Clean PATH temporarily to ensure system commands work
+        local old_path="$PATH"
+        export PATH="/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/opt/homebrew/bin"
+        
+        # Try to use nvm (it should already be loaded in the shell)
+        if command -v nvm >/dev/null 2>&1 && nvm use >/dev/null 2>&1; then
+            # Restore PATH and get version info
+            export PATH="$old_path"
+            local current_version=$(nvm current 2>/dev/null)
+            local npm_version=$(npm --version 2>/dev/null)
+            
+            if [[ -n "$current_version" && -n "$npm_version" ]]; then
+                echo "🚀 \033[92mNow using node $current_version (npm v$npm_version)\033[0m"
+                echo "✅ \033[92mSuccessfully switched to Node $current_version\033[0m"
+            else
+                echo "✅ \033[92mSuccessfully switched to Node $required_version\033[0m"
+            fi
+        else
+            # Restore PATH and show error
+            export PATH="$old_path"
+            echo "❌ \033[91mCould not switch to Node $required_version. Please run 'nvm use' manually.\033[0m"
+        fi
+    fi
+    
+    # Show git branch if in a git repository
+    if git rev-parse --git-dir > /dev/null 2>&1; then
+        local branch=$(git branch --show-current 2>/dev/null)
+        local git_changes=$(git status --porcelain 2>/dev/null | wc -l | tr -d ' ')
+        if [[ -n "$branch" ]]; then
+            if [[ "$git_changes" -gt 0 ]]; then
+                echo "🌿 \033[93mGit branch:\033[0m \033[94m$branch\033[0m \033[91m($git_changes changes)\033[0m"
+            else
+                echo "🌿 \033[93mGit branch:\033[0m \033[94m$branch\033[0m \033[92m(clean)\033[0m"
+            fi
+        fi
+    fi
+    
+    zle reset-prompt
+  else
+    echo "🚫 \033[90mProject selection cancelled\033[0m"
     zle reset-prompt
   fi
 }
 zle -N fzf-project-widget
 
-# FZF function to find files in current directory
+# FZF function to find files in current directory with enhanced messaging
 function fzf-file-widget() {
+  echo "🔍 \033[96mSearching for files in current directory...\033[0m"
+  
   local selected
-  selected=$(fd --type f --hidden --follow --exclude .git --exclude node_modules | 
-    fzf --header="📄 Select File" \
-        --preview="bat --color=always --style=numbers --line-range=:500 {}" \
-        --preview-window=right:60%:wrap)
+  selected=$(fd --type f --hidden --follow --exclude .git --exclude node_modules --exclude .DS_Store | 
+    fzf --header="📄 Select File to Insert in Command Line" \
+        --prompt="❯ " \
+        --preview="bat --color=always --style=numbers --line-range=:500 {} 2>/dev/null || head -20 {}" \
+        --preview-window=right:60%:wrap \
+        --height=80%)
   
   if [[ -n $selected ]]; then
+    echo "📄 \033[92mSelected file:\033[0m \033[94m$selected\033[0m"
     LBUFFER="${LBUFFER}${selected}"
+    zle reset-prompt
+  else
+    echo "🚫 \033[90mFile selection cancelled\033[0m"
     zle reset-prompt
   fi
 }
 zle -N fzf-file-widget
 
-# FZF function to search git commits
+# FZF function to search git commits with enhanced messaging
 function fzf-git-commits() {
-  git log --oneline --color=always --all --graph | 
-  fzf --ansi --no-sort --reverse --tiebreak=index \
-      --header="🔍 Git Commits" \
-      --preview="echo {} | grep -o '[a-f0-9]\{7\}' | head -1 | xargs git show --color=always" \
-      --preview-window=right:60%:wrap
+  if ! git rev-parse --git-dir > /dev/null 2>&1; then
+    echo "❌ \033[91mNot in a git repository\033[0m"
+    return 1
+  fi
+  
+  echo "🔍 \033[96mSearching git commits...\033[0m"
+  
+  local selected
+  selected=$(git log --oneline --color=always --all --graph | 
+    fzf --ansi --no-sort --reverse --tiebreak=index \
+        --header="🔍 Git Commits - Press Enter to View Details" \
+        --prompt="❯ " \
+        --preview="echo {} | grep -o '[a-f0-9]\{7\}' | head -1 | xargs git show --color=always" \
+        --preview-window=right:60%:wrap \
+        --height=80%)
+  
+  if [[ -n $selected ]]; then
+    local commit_hash=$(echo "$selected" | grep -o '[a-f0-9]\{7\}' | head -1)
+    echo "📝 \033[92mSelected commit:\033[0m \033[94m$commit_hash\033[0m"
+    git show "$commit_hash"
+  else
+    echo "🚫 \033[90mCommit selection cancelled\033[0m"
+  fi
 }
 
-# FZF function to search processes
+# FZF function to search and manage processes
 function fzf-processes() {
-  ps aux | 
-  fzf --header="🔄 Running Processes" \
-      --height=50% \
-      --preview="echo {}" \
-      --preview-window=down:3:wrap \
-      --bind="enter:execute(kill -9 {2})"
+  echo "🔍 \033[96mSearching running processes...\033[0m"
+  
+  local selected
+  selected=$(ps aux | grep -v grep | 
+    fzf --header="🔄 Running Processes - Press Enter to Kill Process" \
+        --prompt="❯ " \
+        --height=70% \
+        --preview="echo 'Process Details:'; echo {}; echo ''; echo 'Use Enter to kill this process'" \
+        --preview-window=down:4:wrap)
+  
+  if [[ -n $selected ]]; then
+    local pid=$(echo "$selected" | awk '{print $2}')
+    local process_name=$(echo "$selected" | awk '{for(i=11;i<=NF;i++) printf "%s ", $i; print ""}')
+    
+    echo "⚠️  \033[93mAbout to kill process:\033[0m"
+    echo "   PID: \033[94m$pid\033[0m"
+    echo "   Process: \033[94m$process_name\033[0m"
+    echo -n "❓ \033[96mAre you sure? (y/N):\033[0m "
+    read -r confirm
+    
+    if [[ "$confirm" =~ ^[Yy]$ ]]; then
+      if kill -9 "$pid" 2>/dev/null; then
+        echo "✅ \033[92mProcess $pid killed successfully\033[0m"
+      else
+        echo "❌ \033[91mFailed to kill process $pid\033[0m"
+      fi
+    else
+      echo "🚫 \033[90mProcess kill cancelled\033[0m"
+    fi
+  else
+    echo "🚫 \033[90mProcess selection cancelled\033[0m"
+  fi
+}
+
+# Quick directory info function with emojis
+function qinfo() {
+  echo "📂 \033[93mCurrent Directory Info:\033[0m"
+  echo "   📍 \033[94mLocation:\033[0m $(pwd)"
+  echo "   📊 \033[94mFiles:\033[0m $(find . -maxdepth 1 -type f | wc -l | tr -d ' ') files, $(find . -maxdepth 1 -type d | wc -l | tr -d ' ') directories"
+  
+  if [[ -f "package.json" ]]; then
+    local project_name=$(command jq -r '.name // "Unknown"' package.json 2>/dev/null || echo "Unknown")
+    echo "   📦 \033[93mNode.js project:\033[0m $project_name"
+  fi
+  
+  if git rev-parse --git-dir > /dev/null 2>&1; then
+    local branch=$(git branch --show-current 2>/dev/null)
+    local git_changes=$(git status --porcelain 2>/dev/null | wc -l | tr -d ' ')
+    echo "   🌿 \033[93mGit:\033[0m branch \033[94m$branch\033[0m, $git_changes changes"
+  fi
+  
+  if [[ -f ".nvmrc" ]]; then
+    local required_version
+    read -r required_version < .nvmrc 2>/dev/null || required_version="Unknown"
+    required_version=${required_version//[^a-zA-Z0-9.]/}
+    echo "   🔄 \033[96mNode version required:\033[0m $required_version"
+  fi
+}
+
+# Enhanced ls with project info
+function lsp() {
+  echo "📁 \033[93mDirectory Contents:\033[0m"
+  eza --color=always --long --git --icons=always --group-directories-first "$@"
+  
+  echo ""
+  qinfo
+}
+
+# Git status with enhanced messaging
+function gstatus() {
+  if ! git rev-parse --git-dir > /dev/null 2>&1; then
+    echo "❌ \033[91mNot in a git repository\033[0m"
+    return 1
+  fi
+  
+  echo "🌿 \033[93mGit Status:\033[0m"
+  git status --short --branch
+  
+  local ahead=$(git rev-list --count @{u}..HEAD 2>/dev/null || echo "0")
+  local behind=$(git rev-list --count HEAD..@{u} 2>/dev/null || echo "0")
+  
+  if [[ "$ahead" -gt 0 ]]; then
+    echo "⬆️  \033[92m$ahead commits ahead of remote\033[0m"
+  fi
+  
+  if [[ "$behind" -gt 0 ]]; then
+    echo "⬇️  \033[93m$behind commits behind remote\033[0m"
+  fi
+  
+  if [[ "$ahead" -eq 0 && "$behind" -eq 0 ]]; then
+    echo "✅ \033[92mUp to date with remote\033[0m"
+  fi
+}
+
+# Quick npm/yarn commands with messaging
+function ndev() {
+  if [[ -f "package.json" ]]; then
+    echo "🚀 \033[96mStarting development server...\033[0m"
+    npm run dev
+  else
+    echo "❌ \033[91mNo package.json found in current directory\033[0m"
+  fi
+}
+
+function nbuild() {
+  if [[ -f "package.json" ]]; then
+    echo "🏗️  \033[96mBuilding project...\033[0m"
+    npm run build
+  else
+    echo "❌ \033[91mNo package.json found in current directory\033[0m"
+  fi
+}
+
+function ntest() {
+  if [[ -f "package.json" ]]; then
+    echo "🧪 \033[96mRunning tests...\033[0m"
+    npm run test
+  else
+    echo "❌ \033[91mNo package.json found in current directory\033[0m"
+  fi
 }
 
 # Key bindings for FZF widgets
