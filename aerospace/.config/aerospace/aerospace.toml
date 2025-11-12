@@ -133,6 +133,9 @@ automatically-unhide-macos-hidden-apps = false
     down = 'volume down'
     up = 'volume up'
     shift-down = ['volume set 0', 'mode main']
+    
+    # Clean up invisible/background windows (W for Window cleanup)
+    w = ['flatten-workspace-tree', 'mode main']
 
 # ---------- App → Workspace rules ----------
 # Tip: get IDs with: `aerospace list-apps`
@@ -216,6 +219,27 @@ run = "move-node-to-workspace 8"
 [[on-window-detected]]
 if.app-id = "net.whatsapp.WhatsApp"
 run = "move-node-to-workspace 8"
+
+# Apps that should float and not be assigned to workspaces (background/menu bar apps)
+[[on-window-detected]]
+if.app-id = "com.1password.1password"
+run = "layout floating"
+
+[[on-window-detected]]
+if.app-id = "com.1password.1password7"  
+run = "layout floating"
+
+[[on-window-detected]]
+if.app-id = "com.1password.1password8"
+run = "layout floating"
+
+[[on-window-detected]]
+if.app-id = "com.agilebits.onepassword7"
+run = "layout floating"
+
+[[on-window-detected]]
+if.app-id = "com.lwouis.alt-tab-macos"
+run = "layout floating"
 
 # Floating Apps (not assigned to specific workspaces)
 [[on-window-detected]]
