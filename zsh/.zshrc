@@ -98,7 +98,7 @@ fzf_projects() {
     "$DEV_PROJECTS/bean-there:p.bt"
     "$DEV_PROJECTS/configs:p.config"
     "$DEV_PROJECTS/advent-of-code:p.adc"
-    "$DEV_EXCO/CustomerPortal:p.cp"
+    "$DEV_EXCO/my.fwc:p.fwc"
     "$DEV_EXCO/csp-npm/csp-npm:p.ncp"
     "$DEV_EXCO/script-csp-repairo:p.repair"
   )
@@ -400,9 +400,10 @@ alias p.spellbook="project_cd '$DEV_PROJECTS/spellbook' true"
 alias p.judgement="project_cd '$DEV_PROJECTS/judgement' true"
 alias p.folio="project_cd '$DEV_PROJECTS/folio' true"
 alias p.bt="project_cd '$DEV_PROJECTS/bean-there' true"
+alias p.an="project_cd '$DEV_PROJECTS/azure-nimbus' true"
 
 # Exco projects (with NVM)
-alias p.cp="project_cd '$DEV_EXCO/CustomerPortal' true"
+alias p.fwc="project_cd '$DEV_EXCO/my.fwc' true"
 alias p.ncp="project_cd '$DEV_EXCO/csp-npm/csp-npm' true"
 alias p.repair="project_cd '$DEV_EXCO/script-csp-repairo' true"
 
@@ -419,9 +420,10 @@ alias t.p.spellbook="tmux_project p.spellbook"
 alias t.p.judgement="tmux_project p.judgement"  
 alias t.p.folio="tmux_project p.folio"
 alias t.p.bt="tmux_project p.bt"
-alias t.p.cp="tmux_project p.cp"
+alias t.p.fwc="tmux_project p.fwc"
 alias t.p.ncp="tmux_project p.ncp"
 alias t.p.repair="tmux_project p.repair"
+alias t.p.ad="tmux_project p.ad"
 
 # =============================================================================
 # Environment Variables & Tokens
