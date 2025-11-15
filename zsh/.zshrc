@@ -288,11 +288,13 @@ alias bstart="bun run start"   # renamed for clarity
 DEV_BASE="$HOME/Developer"
 DEV_PROJECTS="$DEV_BASE/Projects"
 DEV_EXCO="$DEV_BASE/exco-partners"
+MUGGLEBORN_PROJECTS="$DEV_BASE/muggleborn.dev"
 
 # Directory aliases (d.*)
 alias d.dev="cd $DEV_BASE"
 alias d.projects="cd $DEV_PROJECTS"
 alias d.exco="cd $DEV_EXCO"
+alias d.mbd="cd $MUGGLEBORN_PROJECTS"
 
 # Helper function for project aliases with enhanced messaging
 project_cd() {
@@ -396,11 +398,16 @@ alias p.config="project_cd '$DEV_PROJECTS/configs'"
 alias p.adc="project_cd '$DEV_PROJECTS/advent-of-code'"
 
 # Node projects (with NVM)
-alias p.spellbook="project_cd '$DEV_PROJECTS/spellbook' true"
 alias p.judgement="project_cd '$DEV_PROJECTS/judgement' true"
-alias p.folio="project_cd '$DEV_PROJECTS/folio' true"
 alias p.bt="project_cd '$DEV_PROJECTS/bean-there' true"
 alias p.an="project_cd '$DEV_PROJECTS/azure-nimbus' true"
+
+# Muggleborn.dev project (with NVM)
+alias p.spellbook="project_cd '$MUGGLEBORN_PROJECTS/spellbook' true"
+alias p.folio="project_cd '$MUGGLEBORN_PROJECTS/folio' true"
+alias p.howler="project_cd '$MUGGLEBORN_PROJECTS/howler' true"
+alias p.obliviate="project_cd '$MUGGLEBORN_PROJECTS/obliviate' true"
+alias p.gringotts="project_cd '$MUGGLEBORN_PROJECTS/gringotts' true"
 
 # Exco projects (with NVM)
 alias p.fwc="project_cd '$DEV_EXCO/my.fwc' true"
