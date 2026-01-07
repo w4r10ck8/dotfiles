@@ -216,6 +216,10 @@ run = "move-node-to-workspace 8"
 if.app-id = "net.whatsapp.WhatsApp"
 run = "move-node-to-workspace 8"
 
+[[on-window-detected]]
+if.app-id = "com.microsoft.teams2"
+run = "move-node-to-workspace 8"
+
 # Apps that should float and not be assigned to workspaces (background/menu bar apps)
 [[on-window-detected]]
 if.app-id = "com.1password.1password"
