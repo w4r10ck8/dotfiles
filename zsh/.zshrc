@@ -288,6 +288,7 @@ alias bstart="bun run start"   # renamed for clarity
 DEV_BASE="$HOME/Developer"
 DEV_PROJECTS="$DEV_BASE/Projects"
 DEV_EXCO="$DEV_BASE/exco-partners"
+DEV_ANOOP="$DEV_BASE/anoop"
 MUGGLEBORN_PROJECTS="$DEV_BASE/muggleborn.dev"
 
 # Directory aliases (d.*)
@@ -295,6 +296,7 @@ alias d.dev="cd $DEV_BASE"
 alias d.projects="cd $DEV_PROJECTS"
 alias d.exco="cd $DEV_EXCO"
 alias d.mbd="cd $MUGGLEBORN_PROJECTS"
+alias d.anoop="cd $DEV_ANOOP"
 
 # Helper function for project aliases with enhanced messaging
 project_cd() {
@@ -413,6 +415,10 @@ alias p.gringotts="project_cd '$MUGGLEBORN_PROJECTS/gringotts' true"
 alias p.fwc="project_cd '$DEV_EXCO/my.fwc' true"
 alias p.ncp="project_cd '$DEV_EXCO/csp-npm/csp-npm' true"
 alias p.repair="project_cd '$DEV_EXCO/script-csp-repairo' true"
+
+# Anoop's projects
+alias p.anoop="project_cd '$DEV_ANOOP' true"
+alias p.modak-fiji="project_cd '$DEV_ANOOP/anoop-modak-group-fiji' true"
 
 # Tmux variants for Node/Exco projects  
 tmux_project() {
