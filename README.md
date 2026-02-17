@@ -19,6 +19,7 @@ Personal dotfiles managed with GNU Stow featuring Tokyo Night theme and professi
 - **starship**: Cross-shell prompt
 - **aerospace**: Window manager for macOS
 - **ghostty**: Terminal emulator with 2px cursor
+- **docker**: Docker CLI configuration with plugin paths
 - **brew**: Package management with Brewfile
 
 ## Setup Instructions
@@ -53,6 +54,7 @@ Personal dotfiles managed with GNU Stow featuring Tokyo Night theme and professi
    stow starship
    stow aerospace
    stow ghostty
+   stow docker
 
    # Or stow everything at once
    stow */
@@ -69,6 +71,7 @@ Personal dotfiles managed with GNU Stow featuring Tokyo Night theme and professi
 ```
 dotfiles/
 ├── aerospace/          # Aerospace window manager config
+├── docker/            # Docker CLI configuration
 ├── brew/              # Homebrew package list
 ├── ghostty/           # Ghostty terminal config
 ├── lazygit/           # Lazygit configuration
