@@ -140,14 +140,36 @@ automatically-unhide-macos-hidden-apps = false
 # ---------- App → Workspace rules ----------
 # Tip: get IDs with: `aerospace list-apps`
 
-# 1: Code Editors (VS Code)
+# 1: Code Editors + Terminal
 [[on-window-detected]]
 if.app-id = "com.microsoft.VSCode"
 run = "move-node-to-workspace 1"
 
-# 2: Productivity Apps (Obsidian, Notes)
 [[on-window-detected]]
-if.app-id = "md.obsidian"
+if.app-id = "com.apple.Terminal"
+run = "move-node-to-workspace 1"
+
+[[on-window-detected]]
+if.app-id = "com.googlecode.iterm2"
+run = "move-node-to-workspace 1"
+
+[[on-window-detected]]
+if.app-id = "com.mitchellh.ghostty"
+run = "move-node-to-workspace 1"
+
+# 2: AI Applications
+[[on-window-detected]]
+if.app-id = "com.openai.chat"
+run = "move-node-to-workspace 2"
+
+# ChatGPT quick text box should float
+[[on-window-detected]]
+if.app-id = "com.openai.chat"
+if.window-title-regex-substring = "Quick|Input|Text|Prompt"
+run = "layout floating"
+
+[[on-window-detected]]
+if.app-id = "com.anthropic.claudefordesktop"
 run = "move-node-to-workspace 2"
 
 # 3: File Management (Finder, Preview, QuickTime)
@@ -163,17 +185,9 @@ run = "move-node-to-workspace 3"
 if.app-id = "com.apple.QuickTimePlayerX"
 run = "move-node-to-workspace 3"
 
-# 4: Terminal Applications
+# 4: Obsidian
 [[on-window-detected]]
-if.app-id = "com.apple.Terminal"
-run = "move-node-to-workspace 4"
-
-[[on-window-detected]]
-if.app-id = "com.googlecode.iterm2"
-run = "move-node-to-workspace 4"
-
-[[on-window-detected]]
-if.app-id = "com.mitchellh.ghostty"
+if.app-id = "md.obsidian"
 run = "move-node-to-workspace 4"
 
 # 5: Web Browsers
@@ -185,26 +199,13 @@ run = "move-node-to-workspace 5"
 if.app-id = "com.google.Chrome"
 run = "move-node-to-workspace 5"
 
-# 6: AI & Chat Applications
-# Main ChatGPT windows go to workspace 6
-[[on-window-detected]]
-if.app-id = "com.openai.chat"
-run = "move-node-to-workspace 6"
-
-# ChatGPT quick text box should float (if it has specific window title patterns)
-[[on-window-detected]]
-if.app-id = "com.openai.chat"
-if.window-title-regex-substring = "Quick|Input|Text|Prompt"
-run = "layout floating"
-
-[[on-window-detected]]
-if.app-id = "com.anthropic.claudefordesktop"
-run = "move-node-to-workspace 6"
-
-
 # 7: Media & Entertainment
 [[on-window-detected]]
 if.app-id = "com.apple.Music"
+run = "move-node-to-workspace 7"
+
+[[on-window-detected]]
+if.app-id = "com.spotify.client"
 run = "move-node-to-workspace 7"
 
 # 8: Communication (Messages, WhatsApp)

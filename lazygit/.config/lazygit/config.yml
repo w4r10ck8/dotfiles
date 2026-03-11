@@ -4,3 +4,8 @@ customCommands:
     command: "code ."
     description: "Open VS Code"
     output: terminal
+  - key: "<c-g>"
+    context: "commitMessage"
+    description: "AI: generate commit message from staged files"
+    command: '~/dotfiles/lazygit/scripts/ai-commit.sh | pbcopy'
+    loadingText: "Generating commit message with Claude..."

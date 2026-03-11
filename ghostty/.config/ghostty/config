@@ -1,6 +1,6 @@
-theme = "tokyonight_night"
-background-opacity = 0.8
-background-blur-radius = 20
+theme = "TokyoNight Night"
+background-opacity = 1
+# background-blur-radius = 20
 
 # Font configuration - using SF Mono to match Neovim
 font-family = "SF Mono"
