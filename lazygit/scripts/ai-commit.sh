@@ -19,9 +19,9 @@ Rules:
 - Types: feat, fix, refactor, style, docs, test, chore
 - First line max 72 characters
 - Imperative mood (e.g. 'add', not 'added' or 'adds')
-- Output ONLY the commit message, nothing else — no explanation, no markdown
+- Output ONLY the raw commit message text, no backticks, no markdown, no code blocks, no quotes
 
 Diff:
 $DIFF"
 
-echo "$PROMPT" | claude --print
+echo "$PROMPT" | claude --print | tr -d '\n'
