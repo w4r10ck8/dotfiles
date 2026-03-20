@@ -721,5 +721,8 @@ bindkey '^F' fzf-file-widget     # Ctrl+F for files
 # Initialize Tools
 # =============================================================================
 
+# Initialize zoxide (smart cd)
+eval "$(zoxide init zsh)"
+
 # Initialize Starship prompt (should be last)
 eval "$(starship init zsh)"

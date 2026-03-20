@@ -5,3 +5,5 @@
 	email = jaypancholi94@gmail.com
 [color]
 	ui = auto
+[core]
+	excludesfile = /Users/w4r10ck/.gitignore_global
