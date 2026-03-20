@@ -1,11 +1,47 @@
-theme = "tokyonight_night"
-background-opacity = 0.8
-background-blur-radius = 20
+theme = duckbones
 
-# Font configuration - using SF Mono to match Neovim
-font-family = "SF Mono"
+macos-titlebar-style = hidden
+background-opacity = 1
+background-blur = 80
+
+window-padding-x = 10
+window-padding-y = 10
+
+keybind = global:cmd+grave_accent=toggle_quick_terminal
+
+keybind = ctrl+tab=text:\x01n
+keybind = cmd+w=text:\x01x
+keybind = cmd+n=text:\x01c
+keybind = cmd+t=text:\x01c
+keybind = cmd+k=text:\x01k
+keybind = cmd+j=text:\x01j
+keybind = cmd+left=text:\x01h
+keybind = cmd+right=text:\x01l
+keybind = cmd+up=text:\x01u
+keybind = cmd+down=text:\x01b
+keybind = cmd+d=text:\x01v
+keybind = cmd+shift+d=text:\x01S
+keybind = cmd+enter=text:\x01z
+keybind = cmd+comma=text:\x01,
+keybind = cmd+f=text:\x01F
+keybind = cmd+shift+left_bracket=text:\x01p
+keybind = cmd+shift+right_bracket=text:\x01n
+keybind = cmd+shift+n=text:\x01N
+keybind = cmd+slash=text:\x01?
+keybind = alt+q=text:\x01d
+
+keybind = cmd+digit_1=text:\x011
+keybind = cmd+digit_2=text:\x012
+keybind = cmd+digit_3=text:\x013
+keybind = cmd+digit_4=text:\x014
+keybind = cmd+digit_5=text:\x015
+keybind = cmd+digit_6=text:\x016
+keybind = cmd+digit_7=text:\x017
+keybind = cmd+digit_8=text:\x018
+keybind = cmd+digit_9=text:\x019
+
+image-storage-limit = 320000000
+
 font-size = 14
-
-# Cursor configuration
-cursor-style = bar
-cursor-style-blink = true
+font-family = JetBrainsMono Nerd Font Mono
+keybind = shift+enter=text:\n

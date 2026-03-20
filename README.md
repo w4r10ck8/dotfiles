@@ -1,82 +1,48 @@
-# 🏠 My Dotfiles - Complete Setup!
+# dotfiles
 
-Personal dotfiles managed with GNU Stow featuring Tokyo Night theme and professional development tools.
+Personal dotfiles managed with GNU Stow. Consistent **Duckbones** theme across all tools.
 
-## 🎨 Tokyo Night Tmux Features
+## Packages
 
-- **Beautiful Tokyo Night theme** with dark purple/blue colors
-- **Enhanced status bar** with system information
-- **Vim-style navigation** between panes
-- **Useful plugins**: vim-tmux-navigator, tmux-yank, tmux-resurrect, tmux-continuum
-- **Custom key bindings** for better workflow
+| Package      | Destination             | Description                                        |
+| ------------ | ----------------------- | -------------------------------------------------- |
+| `aerospace`  | `~/.config/aerospace/`  | Tiling window manager with workspace automation    |
+| `brew`       | `~/`                    | Brewfile — all packages, casks, VS Code extensions |
+| `btop`       | `~/.config/btop/`       | System monitor (spaceduck theme)                   |
+| `claude`     | `~/.claude/`            | Claude Code settings and keybindings               |
+| `docker`     | `~/.docker/`            | Docker CLI config (colima context)                 |
+| `ghostty`    | `~/.config/ghostty/`    | Terminal emulator config + keybinds                |
+| `git`        | `~/.config/git/`        | Global gitignore                                   |
+| `lazygit`    | `~/.config/lazygit/`    | Git TUI config + AI commit script                  |
+| `nvim`       | `~/.config/nvim/`       | Neovim (LazyVim-based)                             |
+| `planck`     | `~/`                    | Planck keyboard layouts (mac + ubuntu)             |
+| `sketchybar` | `~/.config/sketchybar/` | macOS status bar                                   |
+| `starship`   | `~/.config/`            | Shell prompt                                       |
+| `tmux`       | `~/.config/tmux/`       | Terminal multiplexer config + plugins              |
+| `zsh`        | `~/`                    | `.zshrc` — shell config, aliases, project system   |
 
-## Tools Configured
+## Setup
 
-- **zsh**: Shell configuration with oh-my-zsh
-- **nvim**: Neovim editor configuration
-- **tmux**: Terminal multiplexer with Tokyo Night theme and plugins
-- **lazygit**: Git TUI configuration
-- **starship**: Cross-shell prompt
-- **aerospace**: Window manager for macOS
-- **ghostty**: Terminal emulator with 2px cursor
-- **docker**: Docker CLI configuration with plugin paths
-- **brew**: Package management with Brewfile
+```bash
+git clone <repo-url> ~/dotfiles
+cd ~/dotfiles
 
-## Setup Instructions
+# Install Homebrew packages
+brew bundle --file=brew/Brewfile
 
-1. Clone this repository:
+# Stow everything
+stow */
 
-   ```bash
-   git clone <repo-url> ~/dotfiles
-   cd ~/dotfiles
-   ```
-
-2. Install GNU Stow:
-
-   ```bash
-   brew install stow
-   ```
-
-3. Install packages from Brewfile:
-
-   ```bash
-   brew bundle --file=brew/Brewfile
-   ```
-
-4. Stow the configurations you want:
-
-   ```bash
-   # Stow individual configs
-   stow zsh
-   stow nvim
-   stow tmux
-   stow lazygit
-   stow starship
-   stow aerospace
-   stow ghostty
-   stow docker
-
-   # Or stow everything at once
-   stow */
-   ```
+# Or individual packages
+stow zsh nvim tmux
+```
 
 ## Usage
 
-- **Edit configs**: Make changes directly in the `~/dotfiles/` directory
-- **Add new configs**: Create new folders and run `stow <folder-name>`
-- **Remove configs**: Run `stow -D <folder-name>` to unlink
-
-## Structure
-
+```bash
+stow <package>      # apply (create symlinks)
+stow -D <package>   # remove symlinks
+stow */             # apply all
 ```
-dotfiles/
-├── aerospace/          # Aerospace window manager config
-├── docker/            # Docker CLI configuration
-├── brew/              # Homebrew package list
-├── ghostty/           # Ghostty terminal config
-├── lazygit/           # Lazygit configuration
-├── nvim/              # Neovim configuration
-├── starship/          # Starship prompt config
-├── tmux/              # Tmux configuration and plugins
-└── zsh/               # Zsh and Git configuration
-```
+
+Edit config directly in `~/dotfiles/` — changes reflect immediately via symlinks.

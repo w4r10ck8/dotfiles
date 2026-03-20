@@ -1,22 +1,20 @@
 -- Keymaps are automatically loaded on the VeryLazy event
--- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
--- Add any additional keymaps here
--- -- Copy relative path to clipboard
+-- Default keymaps: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 
 local wk = require("which-key")
 
 wk.add({
-  { "<leader>c", group = "code" }, -- <Space>c as "code" group
-  { "<leader>cy", group = " yank" }, -- <Space>cy as "yank" subgroup
+  { "<leader>c", group = "code" },
+  { "<leader>cy", group = " yank" },
   {
-    "<leader>cyr", -- Full keybinding: <Space>cyr
+    "<leader>cyr",
     function()
       local relative_path = vim.fn.expand("%")
       vim.fn.setreg("+", relative_path)
       print("Copied relative path: " .. relative_path)
     end,
-    desc = " Copy relative path", -- Description for which-key
-    mode = "n", -- Normal mode
+    desc = " Copy relative path",
+    mode = "n",
   },
   {
     "<leader>cyf",
@@ -25,7 +23,7 @@ wk.add({
       vim.fn.setreg("+", full_path)
       print("Copied full path: " .. full_path)
     end,
-    desc = " Copy full path",
+    desc = " Copy full path",
     mode = "n",
   },
   {
@@ -35,7 +33,7 @@ wk.add({
       vim.fn.setreg("+", dir_path)
       print("Copied directory path: " .. dir_path)
     end,
-    desc = " Copy directory path",
+    desc = " Copy directory path",
     mode = "n",
   },
 })

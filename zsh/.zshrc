@@ -8,18 +8,14 @@ export PATH="/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/opt/homebrew/bin:/opt
 # Oh My Zsh configuration
 export ZSH="$HOME/.oh-my-zsh"
 
-# Load NVM properly
+# Lazy NVM loading (speeds up shell startup)
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-# Application configurations
-export LG_CONFIG_FILE="$HOME/.config/lazygit/config.yml"
-
-# Load NVM properly
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+nvm() {
+  unfunction nvm
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+  nvm "$@"
+}
 
 # Application configurations
 export LG_CONFIG_FILE="$HOME/.config/lazygit/config.yml"
@@ -46,44 +42,6 @@ source $ZSH/oh-my-zsh.sh
 # =============================================================================
 # Aliases
 # =============================================================================
-
-# Helper functions
-tmux_alias(){
-  local base_alias="$1"
-  alias "t.$base_alias"="$base_alias && tmux"
-}
-
-# =============================================================================
-# FZF Configuration & Functions
-# =============================================================================
-
-# FZF default options with Tokyo Night theme
-export FZF_DEFAULT_OPTS="
---color=fg:#c0caf5,bg:#1a1b26,hl:#bb9af7
---color=fg+:#c0caf5,bg+:#292e42,hl+:#7dcfff
---color=info:#7aa2f7,prompt:#7dcfff,pointer:#7dcfff
---color=marker:#9ece6a,spinner:#9ece6a,header:#9ece6a
---layout=reverse
---border=rounded
---height=60%
---preview-window=right:50%
---bind='ctrl-u:preview-half-page-up,ctrl-d:preview-half-page-down'
-"
-
-# Use fd for fzf if available (faster than find)
-if command -v fd >/dev/null 2>&1; then
-  export FZF_DEFAULT_COMMAND='fd --type f --strip-cwd-prefix --hidden --follow --exclude .git'
-  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-  export FZF_ALT_C_COMMAND='fd --type d --strip-cwd-prefix --hidden --follow --exclude .git'
-fi
-
-# FZF key bindings and completions
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
-# Custom key bindings (widgets registered after function definitions)
-# bindkey '^P' fzf_projects      # Ctrl+P for project switcher  
-# bindkey '^F' fzf_edit         # Ctrl+F for file finder
-# bindkey '^G' fzf_grep         # Ctrl+G for live grep
 
 # =============================================================================
 # Custom FZF Functions
@@ -195,30 +153,20 @@ fzf_kill() {
   fi
 }
 
-# =============================================================================
-# FZF Aliases & Key Bindings
-# =============================================================================
-
-# Register custom functions as ZLE widgets and bind keys
-zle -N fzf_projects
-zle -N fzf_edit  
-zle -N fzf_grep
-
-# Key bindings for fzf functions
-bindkey '^P' fzf_projects      # Ctrl+P for project switcher
-bindkey '^F' fzf_edit         # Ctrl+F for file finder
-bindkey '^G' fzf_grep         # Ctrl+G for live grep
-
-# Main fzf aliases
+# FZF aliases
 alias fp="fzf_projects"           # Project switcher
 alias ff="fzf_edit"               # File finder & editor
-alias fd="fzf_cd"                 # Directory navigator
+alias fcd="fzf_cd"                # Directory navigator
 alias fg="fzf_grep"               # Live grep search
 alias fb="fzf_git_branch"         # Git branch switcher
 alias fl="fzf_git_log"            # Git log browser
 alias ft="fzf_tmux"               # Tmux session manager
 alias fn="fzf_npm"                # NPM script runner
 alias fk="fzf_kill"               # Process killer
+alias fps="fzf-processes"         # Process killer (full UI)
+alias fnp="fzf-node-ports"        # Node process port killer
+alias fgc="fzf-git-commits"       # Git commit browser
+alias z.help="zhelp"              # ZSH cheat sheet
 
 # Enhanced directory navigation
 alias ..="cd .."
@@ -255,7 +203,7 @@ alias w.nvmrc="node -v > .nvmrc"
 # Package manager aliases
 # PNPM
 alias pd="pnpm dev"
-alias ps="pnpm storybook"
+alias pst="pnpm storybook"
 alias pt="pnpm test"
 alias pv="pnpm validate"
 alias pi="pnpm i"
@@ -477,108 +425,24 @@ export FZF_DEFAULT_OPTS="
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git --exclude node_modules'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
-# FZF function to find and switch to project directories with enhanced messaging
+# FZF function to find and switch to project directories
 function fzf-project-widget() {
-  echo "🔍 \033[96mSearching for projects...\033[0m"
-  
   local selected
-  selected=$(find ~/Projects ~/work ~/dev ~/Developer -type d -name ".git" 2>/dev/null | 
-    sed 's|/.git||' | 
-    sed "s|$HOME|~|" | 
-    sort | 
+  selected=$(find ~/Projects ~/work ~/dev ~/Developer -type d -name ".git" 2>/dev/null |
+    sed 's|/.git||' |
+    sed "s|$HOME|~|" |
+    sort |
     fzf --header="📁 Select Project to Switch To" \
         --prompt="❯ " \
         --preview="eza --tree --level=2 --color=always {} 2>/dev/null || ls -la {}" \
         --preview-window=right:50%:wrap \
         --height=80%)
-  
+
   if [[ -n $selected ]]; then
-    # Expand ~ to home directory
     selected=${selected/#\~/$HOME}
-    echo "🚀 \033[95mSwitching to project...\033[0m"
-    
-    # Use our enhanced project_cd function with NVM detection
     local use_nvm="false"
-    if [[ -f "$selected/.nvmrc" ]]; then
-      use_nvm="true"
-    fi
-    
-    # Change directory with enhanced messaging
-    if [[ ! -d "$selected" ]]; then
-        echo "❌ \033[91mDirectory not found:\033[0m $selected"
-        zle reset-prompt
-        return 1
-    fi
-    
-    cd "$selected"
-    echo "📁 \033[92mSwitched to:\033[0m \033[94m$selected\033[0m"
-    
-    # Check for various project files and show info
-    if [[ -f "package.json" ]]; then
-        local project_name=$(command jq -r '.name // "Unknown"' package.json 2>/dev/null || echo "Unknown")
-        local project_version=$(command jq -r '.version // "Unknown"' package.json 2>/dev/null || echo "Unknown")
-        echo "📦 \033[93mNode.js project:\033[0m $project_name \033[90mv$project_version\033[0m"
-    fi
-    
-    if [[ -f "Cargo.toml" ]]; then
-        echo "🦀 \033[93mRust project detected\033[0m"
-    fi
-    
-    if [[ -f "go.mod" ]]; then
-        echo "🐹 \033[93mGo project detected\033[0m"
-    fi
-    
-    if [[ -f "requirements.txt" ]] || [[ -f "pyproject.toml" ]] || [[ -f "setup.py" ]]; then
-        echo "🐍 \033[93mPython project detected\033[0m"
-    fi
-    
-    # Handle NVM switching if .nvmrc exists
-    if [[ "$use_nvm" == "true" ]]; then
-        # Read .nvmrc file using built-in shell functionality
-        local required_version
-        read -r required_version < .nvmrc 2>/dev/null || required_version="Unknown"
-        # Clean up the version string using parameter expansion
-        required_version=${required_version//[^a-zA-Z0-9.]/}
-        echo "🔄 \033[96mNode version file found, switching to Node $required_version...\033[0m"
-        echo "🔍 \033[96mFound .nvmrc with version <$required_version>\033[0m"
-        
-        # Clean PATH temporarily to ensure system commands work
-        local old_path="$PATH"
-        export PATH="/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/opt/homebrew/bin"
-        
-        # Try to use nvm (it should already be loaded in the shell)
-        if command -v nvm >/dev/null 2>&1 && nvm use >/dev/null 2>&1; then
-            # Restore PATH and get version info
-            export PATH="$old_path"
-            local current_version=$(nvm current 2>/dev/null)
-            local npm_version=$(npm --version 2>/dev/null)
-            
-            if [[ -n "$current_version" && -n "$npm_version" ]]; then
-                echo "🚀 \033[92mNow using node $current_version (npm v$npm_version)\033[0m"
-                echo "✅ \033[92mSuccessfully switched to Node $current_version\033[0m"
-            else
-                echo "✅ \033[92mSuccessfully switched to Node $required_version\033[0m"
-            fi
-        else
-            # Restore PATH and show error
-            export PATH="$old_path"
-            echo "❌ \033[91mCould not switch to Node $required_version. Please run 'nvm use' manually.\033[0m"
-        fi
-    fi
-    
-    # Show git branch if in a git repository
-    if git rev-parse --git-dir > /dev/null 2>&1; then
-        local branch=$(git branch --show-current 2>/dev/null)
-        local git_changes=$(git status --porcelain 2>/dev/null | wc -l | tr -d ' ')
-        if [[ -n "$branch" ]]; then
-            if [[ "$git_changes" -gt 0 ]]; then
-                echo "🌿 \033[93mGit branch:\033[0m \033[94m$branch\033[0m \033[91m($git_changes changes)\033[0m"
-            else
-                echo "🌿 \033[93mGit branch:\033[0m \033[94m$branch\033[0m \033[92m(clean)\033[0m"
-            fi
-        fi
-    fi
-    
+    [[ -f "$selected/.nvmrc" ]] && use_nvm="true"
+    project_cd "$selected" "$use_nvm"
     zle reset-prompt
   else
     echo "🚫 \033[90mProject selection cancelled\033[0m"
@@ -673,6 +537,24 @@ function fzf-processes() {
   fi
 }
 
+# 🔴 Kill Node process by port with fzf
+function fzf-node-ports() {
+  local entry
+  entry=$(lsof -i -P -n | grep LISTEN | grep -i node |
+    awk '{printf "%-8s %-10s %s\n", $9, $2, $1}' |
+    fzf --header="PORT         PID        PROCESS" \
+        --header-first \
+        --prompt="❯ " \
+        --height=50%)
+
+  if [[ -n $entry ]]; then
+    local pid=$(echo "$entry" | awk '{print $2}')
+    local port=$(echo "$entry" | awk '{print $1}')
+    echo "🔴 Killing Node process on $port (PID $pid)..."
+    kill -9 "$pid" && echo "✅ Killed PID $pid" || echo "❌ Failed to kill PID $pid"
+  fi
+}
+
 # Quick directory info function with emojis
 function qinfo() {
   echo "📂 \033[93mCurrent Directory Info:\033[0m"
@@ -761,6 +643,76 @@ function ntest() {
   fi
 }
 
+# 📋 Searchable ZSH cheat sheet
+function zhelp() {
+  local cheatsheet selected
+  cheatsheet=$(cat <<'EOF'
+fp                 Project switcher (static list)
+Ctrl+P             Project switcher (finds all .git dirs)
+ff                 Find and edit a file in nvim
+Ctrl+F             Insert file path into command line
+fcd                Navigate to any directory
+fg                 Live grep search (opens result in nvim)
+fb                 Switch git branches
+fl                 Browse git log
+ft                 Attach to tmux session
+fn                 Run npm script
+fk                 Kill a process (all processes)
+fps                Kill a process (all processes, full UI)
+fnp                Kill a Node process by port
+fgc                Browse git commits
+qinfo              Quick info: dir, git branch, node version
+lsp                ls + qinfo combined
+gstatus            Git status with ahead/behind counts
+ndev               npm run dev (with messaging)
+nbuild             npm run build (with messaging)
+ntest              npm run test (with messaging)
+config.zsh         Edit .zshrc
+config.dotfiles    Open ~/dotfiles in nvim
+config.nvim        Open nvim config
+config.tmux        Open tmux config
+config.aerospace   Open aerospace config
+config.starship    Edit starship.toml
+config.ghostty     Edit ghostty config
+config.lazygit     Edit lazygit config
+g.s                git diff --staged
+g.s.cp             git diff --staged | pbcopy
+lg                 lazygit
+d.dev              ~/Developer
+d.projects         ~/Developer/Projects
+d.exco             ~/Developer/exco-partners
+d.mbd              ~/Developer/muggleborn.dev
+p.spellbook        muggleborn.dev/spellbook
+p.folio            muggleborn.dev/folio
+p.howler           muggleborn.dev/howler
+p.fwc              exco-partners/my.fwc
+p.ncp              exco-partners/csp-npm
+p.repair           exco-partners/script-csp-repairo
+p.judgement        Projects/judgement
+p.bt               Projects/bean-there
+t.p.*              Same as p.* but opens in tmux session
+pd / nd / bd       dev
+pt / nt / bt       test
+pb / nb / bb       build
+pv / nv / bv       validate
+pi / ni / bi       install
+pst / ns / bst     storybook
+EOF
+)
+
+  selected=$(echo "$cheatsheet" | \
+    fzf --header-first \
+        --header="  COMMAND                DESCRIPTION  (Enter to copy)" \
+        --prompt="❯ Search: " \
+        --height=80%)
+
+  if [[ -n $selected ]]; then
+    local cmd=$(echo "$selected" | awk '{print $1}')
+    echo "$cmd" | pbcopy
+    echo "📋 Copied: $cmd"
+  fi
+}
+
 # Key bindings for FZF widgets
 bindkey '^P' fzf-project-widget  # Ctrl+P for projects
 bindkey '^F' fzf-file-widget     # Ctrl+F for files
@@ -768,6 +720,9 @@ bindkey '^F' fzf-file-widget     # Ctrl+F for files
 # =============================================================================
 # Initialize Tools
 # =============================================================================
+
+# Initialize zoxide (smart cd)
+eval "$(zoxide init zsh)"
 
 # Initialize Starship prompt (should be last)
 eval "$(starship init zsh)"
