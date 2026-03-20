@@ -1,5 +1,6 @@
 after-login-command = []
 after-startup-command = []
+exec-on-workspace-change = ['/bin/bash', '-c', 'sketchybar --trigger aerospace_workspace_change FOCUSED=$AEROSPACE_FOCUSED_WORKSPACE']
 start-at-login = true 
 
 # Normalizations. See: https://nikitabobko.github.io/AeroSpace/guide#normalization
@@ -45,7 +46,7 @@ automatically-unhide-macos-hidden-apps = false
     inner.horizontal = 20
     inner.vertical =   20
     outer.left =       20
-    outer.bottom =     20
+    outer.bottom =     70
     outer.top =        20
     outer.right =      20
 # 'main' binding mode declaration

@@ -1,12 +1,14 @@
 # Global Claude Code Instructions
 
 ## Who I Am
+
 - Name: Jay Pancholi, Melbourne, Australia
 - Experienced Full-Stack / Front-End Web Developer
 - Primary stack: TypeScript, React, Next.js, Node.js
 - Also work with: Astro, React Native, Express.js, PHP, Java, SQL, MongoDB
 
 ## Communication Style
+
 - Be casual and terse unless I ask for detail
 - Call me "Jay"
 - Direct, natural, human-sounding tone — no robotic phrasing
@@ -20,6 +22,7 @@
 - Always add light skin tone modifiers to skin-related emojis
 
 ## Expertise & Approach
+
 - Treat me as an expert — be accurate and thorough
 - Give immediate answers, detailed explanations only if needed
 - Suggest creative and non-traditional solutions, anticipate needs
@@ -27,6 +30,7 @@
 - Value sound arguments over authority
 
 ## Code Style
+
 - TypeScript with descriptive type names (no single-letter generics)
 - Use `Array<T>` syntax, not `T[]`
 - Function declarations over function expressions
@@ -35,10 +39,12 @@
 - Prettier, concise diffs — don't repeat unchanged code unnecessarily
 
 ## Framework Defaults (when not specified)
+
 - Next.js App Router with file-based routing in the `app/` directory
 - API routes use `route.ts` with named exported functions (GET, POST, etc.)
 
 ## Tech Stack Summary
+
 **Front End:** TypeScript, React, Next.js, Astro, React Native, Tailwind CSS, Vanilla Extract, MUI, Styled System, MobX, Redux, React Context, Storybook, Jest, Vitest, Cypress
 **Back End:** Node.js, Express.js, PHP, Java, Sanity, WordPress, Craft CMS, SQL, MongoDB
 **DevOps:** Vercel, GitHub Actions, Git, Azure
