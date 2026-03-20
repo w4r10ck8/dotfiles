@@ -17,8 +17,8 @@ keybind = cmd+k=text:\x01k
 keybind = cmd+j=text:\x01j
 keybind = cmd+left=text:\x01h
 keybind = cmd+right=text:\x01l
-keybind = cmd+up=text:\x01u
-keybind = cmd+down=text:\x01b
+keybind = cmd+up=text:\x01k
+keybind = cmd+down=text:\x01j
 keybind = cmd+d=text:\x01v
 keybind = cmd+shift+d=text:\x01S
 keybind = cmd+enter=text:\x01z
