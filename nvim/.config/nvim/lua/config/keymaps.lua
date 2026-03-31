@@ -5,6 +5,14 @@ local wk = require("which-key")
 
 wk.add({
   { "<leader>c", group = "code" },
+  {
+    "<leader>ci",
+    function()
+      require("copilot.panel").open()
+    end,
+    desc = "Copilot: open panel",
+    mode = "n",
+  },
   { "<leader>cy", group = " yank" },
   {
     "<leader>cyr",
@@ -24,6 +32,14 @@ wk.add({
       print("Copied full path: " .. full_path)
     end,
     desc = " Copy full path",
+    mode = "n",
+  },
+  {
+    "<leader>cL",
+    function()
+      vim.cmd("LspRestart")
+    end,
+    desc = "Restart LSP",
     mode = "n",
   },
   {

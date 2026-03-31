@@ -3,7 +3,7 @@
 # =============================================================================
 
 # Path configuration - ensure system paths are first
-export PATH="/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:$HOME/bin:$PATH"
+export PATH="/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin:/opt/homebrew/bin:/opt/homebrew/sbin:$HOME/.local/bin:$HOME/bin:$PATH"
 
 # Oh My Zsh configuration
 export ZSH="$HOME/.oh-my-zsh"

@@ -5,10 +5,9 @@ local opt = vim.opt
 
 vim.lsp.inlay_hint.enable(false)
 
-opt.wrap = true
+opt.wrap = false
 
 if vim.fn.has("nvim-0.10") == 1 then
-  opt.smoothscroll = true
   opt.foldexpr = "v:lua.require'lazyvim.util'.treesitter.foldexpr()"
   opt.foldmethod = "expr"
   opt.foldtext = ""
