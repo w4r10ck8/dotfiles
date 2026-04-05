@@ -26,6 +26,16 @@ customCommands:
     command: "code ."
     description: "Open VS Code"
     output: terminal
+  - key: "C"
+    context: "localBranches"
+    prompts:
+      - type: "input"
+        title: "What are you working on? (paste ticket)"
+        key: "Ticket"
+    command: "printf '%s\\n' '{{.Form.Ticket}}' > /tmp/lg_ticket && ~/dotfiles/lazygit/scripts/ai-branch.sh"
+    loadingText: "Generating branch name with Claude..."
+    output: none
+    description: "Create branch from ticket"
   - key: "<c-g>"
     context: "commitMessage"
     description: "AI: generate commit message from staged files"
