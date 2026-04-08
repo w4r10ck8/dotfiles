@@ -4,6 +4,8 @@
 # Used as a lazygit custom command — outputs the message to stdout
 # so lazygit can pre-fill the commit prompt.
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 DIFF=$(git diff --cached)
 
 if [ -z "$DIFF" ]; then
@@ -24,4 +26,4 @@ Rules:
 Diff:
 $DIFF"
 
-echo "$PROMPT" | claude --print | tr -d '\n'
+printf '%s' "$PROMPT" | "$SCRIPT_DIR/ai-provider.sh" | tr -d '\n'
