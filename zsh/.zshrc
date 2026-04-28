@@ -186,6 +186,8 @@ alias lg="lazygit"
 # Configuration file aliases
 alias config.zsh="cd ~/ && nvim .zshrc"
 alias config.dotfiles="cd ~/dotfiles && nvim ."
+alias config.codex="cd ~/.codex/ && nvim ."
+alias i.codex="cd ~/Library/Mobile\\ Documents/iCloud~md~obsidian/Documents/Codex/"
 alias config.nvim="cd ~/.config/nvim/ && nvim ."
 alias config.tmux="cd ~/.config/tmux/ && nvim ."
 alias config.aerospace="cd ~/.config/aerospace/ && nvim ."
@@ -196,6 +198,27 @@ alias config.lazygit="cd ~/.config/lazygit/ && nvim config"
 # Git aliases
 alias g.s.cp="git diff --staged | pbcopy" # git staged copy
 alias g.s="git diff --staged"            # git staged
+
+codex_pr_review() {
+  local pr_number="$1"
+
+  if [[ -z "$pr_number" ]]; then
+    echo "Usage: codex_pr_review <pr-number>"
+    return 1
+  fi
+
+  if ! git rev-parse --show-toplevel >/dev/null 2>&1; then
+    echo "Run this inside a git repository."
+    return 1
+  fi
+
+  local repo_root
+  repo_root="$(git rev-parse --show-toplevel)"
+
+  codex -C "$repo_root" "Use \$azure-pr-review-report and \$code-review to review PR $pr_number. Resolve the PR against its target branch, review only the changed files against that target branch, and write or overwrite .reviews/PR-$pr_number-review.md."
+}
+
+alias pr.review="codex_pr_review"
 
 # Node version file creation
 alias w.nvmrc="node -v > .nvmrc"
@@ -669,6 +692,7 @@ nbuild             npm run build (with messaging)
 ntest              npm run test (with messaging)
 config.zsh         Edit .zshrc
 config.dotfiles    Open ~/dotfiles in nvim
+config.codex       Open codex config
 config.nvim        Open nvim config
 config.tmux        Open tmux config
 config.aerospace   Open aerospace config
@@ -677,6 +701,7 @@ config.ghostty     Edit ghostty config
 config.lazygit     Edit lazygit config
 g.s                git diff --staged
 g.s.cp             git diff --staged | pbcopy
+pr.review          Open Codex PR review flow for current repo
 lg                 lazygit
 d.dev              ~/Developer
 d.projects         ~/Developer/Projects

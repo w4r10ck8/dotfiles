@@ -30,6 +30,7 @@ Each directory follows GNU Stow conventions — files are placed relative to `$H
 - `brew/` → `~/` — Brewfile for all packages, casks, and VS Code extensions
 - `btop/` → `~/.config/btop/` — System monitor with spaceduck theme
 - `claude/` → `~/.claude/` — Claude Code settings, keybindings, and personal instructions
+- `codex/` → `~/.codex/` — Codex config and custom skills
 - `docker/` → `~/.docker/` — Docker CLI config with plugin paths (colima context)
 - `ghostty/` → `~/.config/ghostty/` — Terminal emulator config with duckbones theme
 - `git/` → `~/.config/git/` — Global gitignore (`.DS_Store`, `node_modules`, `.env.local`, etc.)
@@ -46,6 +47,21 @@ Each directory follows GNU Stow conventions — files are placed relative to `$H
 ### AI Commit (lazygit)
 
 `lazygit/scripts/ai-commit.sh` uses the `claude --print` CLI to generate conventional commit messages from staged diffs. Triggered in lazygit with `Ctrl+G` in commit message context — pipes output to clipboard. Requires the `claude` CLI to be authenticated.
+
+### Codex Global Config
+
+`codex/` is a standard Stow package for the stable parts of `~/.codex/`:
+
+- `config.toml` for default model, reasoning effort, personality, and plugins
+- custom skills under `skills/`
+
+Current custom skills include:
+
+- `jay-defaults` for baseline user preferences
+- `code-review` for findings-first review behavior
+- `azure-pr-review-report` for Azure DevOps PR reviews written into `.reviews/PR-<number>-review.md`
+
+Do not track runtime files such as auth, logs, session history, sqlite databases, caches, or temp directories.
 
 ### AeroSpace Workspace Layout
 
@@ -126,6 +142,7 @@ Quick navigation aliases in `.zshrc`:
 ```
 config.zsh       → edit .zshrc
 config.dotfiles  → open ~/dotfiles in nvim
+config.codex     → open codex config
 config.nvim      → open nvim config
 config.tmux      → open tmux config
 config.aerospace → open aerospace config

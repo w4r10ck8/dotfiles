@@ -1,1 +1,48 @@
-{}
+{
+  "statusLine": {
+    "type": "command",
+    "command": "bash \"/Users/w4r10ck/.claude/plugins/marketplaces/caveman/hooks/caveman-statusline.sh\""
+  },
+  "enabledPlugins": {
+    "caveman@caveman": true
+  },
+  "extraKnownMarketplaces": {
+    "caveman": {
+      "source": {
+        "source": "github",
+        "repo": "JuliusBrussee/caveman"
+      }
+    }
+  },
+  "mcpServers": {
+    "gmail": {
+      "command": "gmail-mcp-server",
+      "args": [],
+      "env": {}
+    }
+  },
+  "hooks": {
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/save-compaction.sh",
+            "async": true
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/token-threshold-dump.sh",
+            "async": true
+          }
+        ]
+      }
+    ]
+  }
+}

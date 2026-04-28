@@ -10,6 +10,7 @@ Personal dotfiles managed with GNU Stow. Consistent **Duckbones** theme across a
 | `brew`       | `~/`                    | Brewfile — all packages, casks, VS Code extensions |
 | `btop`       | `~/.config/btop/`       | System monitor (spaceduck theme)                   |
 | `claude`     | `~/.claude/`            | Claude Code settings and keybindings               |
+| `codex`      | `~/.codex/`             | Codex config and custom skills                     |
 | `docker`     | `~/.docker/`            | Docker CLI config (colima context)                 |
 | `ghostty`    | `~/.config/ghostty/`    | Terminal emulator config + keybinds                |
 | `git`        | `~/.config/git/`        | Global gitignore                                   |
@@ -34,7 +35,7 @@ brew bundle --file=brew/Brewfile
 stow */
 
 # Or individual packages
-stow zsh nvim tmux
+stow zsh nvim tmux codex
 ```
 
 ## Usage
@@ -46,3 +47,18 @@ stow */             # apply all
 ```
 
 Edit config directly in `~/dotfiles/` — changes reflect immediately via symlinks.
+
+## Codex Notes
+
+The `codex/` package only tracks stable global configuration:
+
+- `~/.codex/config.toml`
+- custom skills in `~/.codex/skills/`
+
+Runtime files such as auth, logs, history, sqlite databases, plugin caches, and session state stay unmanaged in the live `~/.codex/` directory.
+
+Included custom skills:
+
+- `jay-defaults` for Jay's default communication and engineering preferences
+- `code-review` for findings-first review behavior
+- `azure-pr-review-report` for Azure DevOps PR reviews written to `.reviews/PR-<number>-review.md`

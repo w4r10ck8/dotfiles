@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# morning-brief — daily personal morning assistant
+# Symlinked to ~/.local/bin/morning-brief via: stow scripts
+#
+# Env vars (set in ~/.zshrc or ~/.config/morning-brief/.env):
+#   GMAIL_MCP_SERVER_CMD       — override gmail MCP server binary (default: gmail-mcp-server)
+#   GMAIL_TOOL_SEARCH          — override search tool name (default: search_emails)
+#   GMAIL_TOOL_MODIFY_LABELS   — override modify labels tool name (default: modify_email_labels)
+#   DRY_RUN=1                  — skip archive, Things3, and Obsidian write
+
+export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:$PATH"
+
+SCRIPT_DIR="$HOME/scripts/morning-brief"
+
+if [ ! -d "$SCRIPT_DIR" ]; then
+  echo "Error: morning-brief script not found at $SCRIPT_DIR" >&2
+  echo "Run: cd ~/dotfiles && stow scripts" >&2
+  exit 1
+fi
+
+if ! command -v bun &>/dev/null; then
+  echo "Error: bun not found. Install from https://bun.sh" >&2
+  exit 1
+fi
+
+exec bun run "$SCRIPT_DIR/index.ts" "$@"

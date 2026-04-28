@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex Log"
+  short_description: "Log work to Obsidian Codex vault"
+  default_prompt: "Use $codex-log to record the current work context in the Codex vault and update today's daily note."

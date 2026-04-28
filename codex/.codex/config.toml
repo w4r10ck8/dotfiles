@@ -1,0 +1,15 @@
+model = "gpt-5.4"
+model_reasoning_effort = "medium"
+personality = "pragmatic"
+
+[plugins."gmail@openai-curated"]
+enabled = true
+
+[plugins."github@openai-curated"]
+enabled = true
+
+[projects."/Users/w4r10ck/Developer/exco-partners/my.fwc"]
+trust_level = "trusted"
+
+[projects."/Users/w4r10ck/dotfiles"]
+trust_level = "trusted"
