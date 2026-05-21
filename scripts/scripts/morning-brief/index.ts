@@ -41,28 +41,28 @@ function getPreviousWorkingDay(date: Date): Date {
 
 async function run(): Promise<void> {
   const now = new Date();
-  console.log(`\nMorning Brief — ${now.toLocaleString('en-AU', { timeZone: 'Australia/Melbourne' })}`);
-  if (isDryRun) console.log('(dry run)\n');
+  console.log(`\n☀️  Morning Brief — ${now.toLocaleString('en-AU', { timeZone: 'Australia/Melbourne' })}`);
+  if (isDryRun) console.log('🧪 (dry run)\n');
   console.log('---');
 
   // Skip weekends entirely
   const day = now.getDay();
   if (day === 0 || day === 6) {
-    console.log('Weekend — nothing to do');
+    console.log('🏖️  Weekend — nothing to do');
     return;
   }
 
   // 1. Create today's daily note (idempotent)
   if (!isDryRun) {
-    console.log('Creating daily note...');
+    console.log('📝 Creating daily note...');
     createDailyNote();
-    console.log(`  ${getDailyNotePath(now)}`);
+    console.log(`   ${getDailyNotePath(now)}`);
   }
 
   // 2. Get previous working day (skip weekends)
   const prevWorkday = getPreviousWorkingDay(now);
   const prevLabel = prevWorkday.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'short', timeZone: 'Australia/Melbourne' });
-  console.log(`Reading ${prevLabel}'s work...`);
+  console.log(`📖 Reading ${prevLabel}'s work...`);
 
   // 2a. Raw section content (inline bullets/checkboxes)
   const rawSection = readTodaysWorkSection(prevWorkday);
@@ -70,11 +70,11 @@ async function run(): Promise<void> {
   // 2b. Wiki-linked notes
   const links = readTodaysWorkLinks(prevWorkday);
   if (links.length > 0) {
-    console.log(`  Found ${links.length} wiki link${links.length === 1 ? '' : 's'}: ${links.join(', ')}`);
+    console.log(`   🔗 Found ${links.length} wiki link${links.length === 1 ? '' : 's'}: ${links.join(', ')}`);
   }
 
   // 3. Build notes array
-  console.log('Reading note contents...');
+  console.log('📂 Reading note contents...');
   const notes: Array<LinkedNote> = [];
 
   if (rawSection) {
@@ -89,19 +89,19 @@ async function run(): Promise<void> {
   for (const title of links) {
     const content = readNoteContent(title);
     if (!content) {
-      console.log(`  Warning: could not find note "${title}"`);
+      console.log(`   ⚠️  Warning: could not find note "${title}"`);
     } else {
       notes.push({ title, content });
     }
   }
 
   if (notes.length === 0) {
-    console.log('  No work content found — nothing to summarise');
+    console.log('   ℹ️  No work content found — nothing to summarise');
     return;
   }
 
   // 4. Generate standup summary
-  console.log('Generating standup summary...');
+  console.log('🤖 Generating standup summary...');
   const summary = await generateStandupSummary(notes);
 
   if (isDryRun) {
@@ -112,14 +112,14 @@ async function run(): Promise<void> {
   }
 
   // 5. Patch today's note
-  console.log('Writing standup prep to daily note...');
+  console.log('✍️  Writing standup prep to daily note...');
   patchStandupPrep(now, summary);
 
   const elapsed = ((Date.now() - now.getTime()) / 1000).toFixed(1);
-  console.log(`\nDone in ${elapsed}s`);
+  console.log(`\n✅ Done in ${elapsed}s`);
 }
 
 run().catch((err: unknown) => {
-  console.error('\nMorning Brief failed:', err instanceof Error ? err.message : err);
+  console.error('\n💥 Morning Brief failed:', err instanceof Error ? err.message : err);
   process.exit(1);
 });

@@ -13,3 +13,9 @@ trust_level = "trusted"
 
 [projects."/Users/w4r10ck/dotfiles"]
 trust_level = "trusted"
+
+[projects."/Users/w4r10ck/Developer/muggleborn.dev/gringotts"]
+trust_level = "trusted"
+
+[tui.model_availability_nux]
+"gpt-5.5" = 4

@@ -374,6 +374,7 @@ alias p.adc="project_cd '$DEV_PROJECTS/advent-of-code'"
 alias p.judgement="project_cd '$DEV_PROJECTS/judgement' true"
 alias p.bt="project_cd '$DEV_PROJECTS/bean-there' true"
 alias p.an="project_cd '$DEV_PROJECTS/azure-nimbus' true"
+alias p.donna="project_cd '$DEV_PROJECTS/donna' true"
 
 # Muggleborn.dev project (with NVM)
 alias p.spellbook="project_cd '$MUGGLEBORN_PROJECTS/spellbook' true"

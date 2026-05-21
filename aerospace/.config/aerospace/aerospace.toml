@@ -186,9 +186,13 @@ run = "move-node-to-workspace 3"
 if.app-id = "com.apple.QuickTimePlayerX"
 run = "move-node-to-workspace 3"
 
-# 4: Obsidian
+# 4: Obsidian + Things 3
 [[on-window-detected]]
 if.app-id = "md.obsidian"
+run = "move-node-to-workspace 4"
+
+[[on-window-detected]]
+if.app-id = "com.culturedcode.ThingsMac"
 run = "move-node-to-workspace 4"
 
 # 5: Web Browsers
