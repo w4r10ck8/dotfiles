@@ -17,6 +17,10 @@ nvm() {
   nvm "$@"
 }
 
+# .NET SDK
+export DOTNET_ROOT="/opt/homebrew/opt/dotnet@9/libexec"
+export PATH="/opt/homebrew/opt/dotnet@9/bin:$PATH"
+
 # Application configurations
 export LG_CONFIG_FILE="$HOME/.config/lazygit/config.yml"
 
