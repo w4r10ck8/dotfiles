@@ -1,5 +1,9 @@
 theme = duckbones
 
+cursor-style = bar
+custom-shader = /Users/w4r10ck/.config/ghostty/shaders/cursor_frozen.glsl
+custom-shader-animation = true
+
 macos-titlebar-style = hidden
 background-opacity = 1
 background-blur = 80

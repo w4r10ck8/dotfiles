@@ -24,7 +24,7 @@
 |-----|--------|
 | `prefix + N` | New session |
 | `prefix + s` | Fuzzy session switcher (sesh) |
-| `prefix + w` | New git worktree popup |
+| `prefix + w` | Worktree manager popup (enter: open/create, d: delete) |
 
 ## Copy Mode
 

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source "$CONFIG_DIR/colors.sh"
+
 WS=$(echo "$NAME" | sed 's/space\.//')
 
 if [ -n "$FOCUSED" ]; then
@@ -9,11 +11,19 @@ else
 fi
 
 if [ "$WS" = "$CURRENT" ]; then
-    sketchybar --set "$NAME" \
-        icon.color=0xff00a3cb \
-        icon.font="JetBrainsMono Nerd Font Mono:Bold:14.0"
+    ICON_COLOR=$ICN_RED
 else
-    sketchybar --set "$NAME" \
-        icon.color=0xff444860 \
-        icon.font="JetBrainsMono Nerd Font Mono:Medium:14.0"
+    ICON_COLOR=$ICN_INACTIVE
+fi
+
+LABEL=""
+while IFS= read -r app; do
+  [ -z "$app" ] && continue
+  LABEL+=" $("$PLUGIN_DIR/icon_map.sh" "$app")"
+done <<< "$(aerospace list-windows --workspace "$WS" --format '%{app-name}' 2>/dev/null)"
+
+if [ -n "$LABEL" ]; then
+    sketchybar --animate tanh 20 --set "$NAME" icon.color="$ICON_COLOR" label="$LABEL" label.drawing=on
+else
+    sketchybar --animate tanh 20 --set "$NAME" icon.color="$ICON_COLOR" label.drawing=off
 fi

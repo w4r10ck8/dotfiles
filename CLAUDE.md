@@ -107,7 +107,7 @@ LazyVim-based config in `nvim/.config/nvim/lua/plugins/`. Key plugins:
 ### Tmux Scripts
 
 - `scripts/sesh-pick.sh` — interactive session picker using `sesh` + `gum filter`, bound to `prefix+s`
-- `scripts/new-worktree.sh` — creates a git worktree for a branch with `gum filter`, opens new tmux window, bound to `prefix+w`
+- `scripts/worktree.sh` — fzf-based worktree manager: enter creates a worktree (or jumps to its tmux window if one exists), `d` deletes the highlighted worktree and closes its window, bound to `prefix+w`
 
 ### Ghostty → Tmux Keybind Mapping
 

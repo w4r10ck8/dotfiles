@@ -172,6 +172,11 @@ alias fnp="fzf-node-ports"        # Node process port killer
 alias fgc="fzf-git-commits"       # Git commit browser
 alias z.help="zhelp"              # ZSH cheat sheet
 
+# =============================================================================
+# Layouts
+# =============================================================================
+alias L1="~/.config/tmux/scripts/layout-dev.sh" # Dev layout: left 70% | right 70/30
+
 # Enhanced directory navigation
 alias ..="cd .."
 alias ...="cd ../.."
@@ -285,7 +290,31 @@ project_cd() {
     fi
     
     cd "$path"
-    echo "📁 \033[92mSwitched to:\033[0m \033[94m$path\033[0m"
+
+    # ASCII banner: uppercase folder name, dots/hyphens → spaces (pure zsh, no external commands)
+    local _folder_raw="${path:t}"
+    local _banner_name="${(U)_folder_raw}"
+    _banner_name="${_banner_name//'.'/\ }"
+    _banner_name="${_banner_name//'-'/\ }"
+    local -a _banner_parts
+    _banner_parts=(${=_banner_name})
+    _banner_name="${(j: :)_banner_parts}"
+
+    local _ansi_shadow_font="$HOME/.config/zsh/fonts/ANSI_Shadow.flf"
+    if command -v figlet >/dev/null 2>&1 && [[ -f "$_ansi_shadow_font" ]]; then
+        printf "\033[38;2;0;180;224m"
+        figlet -f "$_ansi_shadow_font" -- "$_banner_name"
+        printf "\033[0m"
+    elif command -v figlet >/dev/null 2>&1; then
+        printf "\033[38;2;0;180;224m"
+        figlet -f slant -- "$_banner_name"
+        printf "\033[0m"
+    else
+        printf "\n  \033[38;2;0;180;224m%s\033[0m\n\n" "$_banner_name"
+    fi
+
+    # Duckbones muted (#444860) path subtitle
+    printf "  \033[38;2;68;72;96m%s\033[0m\n\n" "$path"
     
     # Check for various project files and show info
     if [[ -f "package.json" ]]; then
@@ -386,6 +415,8 @@ alias p.folio="project_cd '$MUGGLEBORN_PROJECTS/folio' true"
 alias p.howler="project_cd '$MUGGLEBORN_PROJECTS/howler' true"
 alias p.obliviate="project_cd '$MUGGLEBORN_PROJECTS/obliviate' true"
 alias p.gringotts="project_cd '$MUGGLEBORN_PROJECTS/gringotts' true"
+alias p.mm="project_cd '$MUGGLEBORN_PROJECTS/mischief-managed' true"
+alias p.o="project_cd '$MUGGLEBORN_PROJECTS/operator' true"
 
 # Exco projects (with NVM)
 alias p.fwc="project_cd '$DEV_EXCO/my.fwc' true"
@@ -752,7 +783,14 @@ bindkey '^F' fzf-file-widget     # Ctrl+F for files
 # =============================================================================
 
 # Initialize zoxide (smart cd)
-eval "$(zoxide init zsh)"
+if command -v zoxide >/dev/null 2>&1; then
+  _zoxide_bin="$(command -v zoxide)"
+  eval "$("$_zoxide_bin" init zsh | sed "s|\\\\command zoxide|\\\\command $_zoxide_bin|g")"
+  unset _zoxide_bin
+fi
 
 # Initialize Starship prompt (should be last)
 eval "$(starship init zsh)"
+
+# Bun global bin
+export PATH="$HOME/.bun/bin:$PATH"

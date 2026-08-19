@@ -1,26 +1,4 @@
 {
-  "statusLine": {
-    "type": "command",
-    "command": "bash \"/Users/w4r10ck/.claude/plugins/marketplaces/caveman/hooks/caveman-statusline.sh\""
-  },
-  "enabledPlugins": {
-    "caveman@caveman": true
-  },
-  "extraKnownMarketplaces": {
-    "caveman": {
-      "source": {
-        "source": "github",
-        "repo": "JuliusBrussee/caveman"
-      }
-    }
-  },
-  "mcpServers": {
-    "gmail": {
-      "command": "gmail-mcp-server",
-      "args": [],
-      "env": {}
-    }
-  },
   "hooks": {
     "PreCompact": [
       {
@@ -44,5 +22,36 @@
         ]
       }
     ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash \"/Users/w4r10ck/.claude/plugins/marketplaces/caveman/hooks/caveman-statusline.sh\""
+  },
+  "enabledPlugins": {
+    "caveman@caveman": true,
+    "ponytail@ponytail": true
+  },
+  "extraKnownMarketplaces": {
+    "caveman": {
+      "source": {
+        "source": "github",
+        "repo": "JuliusBrussee/caveman"
+      }
+    },
+    "ponytail": {
+      "source": {
+        "source": "github",
+        "repo": "DietrichGebert/ponytail"
+      }
+    }
+  },
+  "tui": "fullscreen",
+  "skipWorkflowUsageWarning": true,
+  "mcpServers": {
+    "gmail": {
+      "command": "gmail-mcp-server",
+      "args": [],
+      "env": {}
+    }
   }
 }

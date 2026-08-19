@@ -1,8 +1,27 @@
-**/.claude/settings.local.json
-**/.reviews/
+# OS files
 .DS_Store
+
+# Editor swap and backup files
 *.swp
 *.swo
 *~
+
+# Environment files
 **/.env.local
-**/node_modules
+
+# Dependencies
+**/node_modules/
+
+# AI and agent tooling
+**/.agents/
+**/.aider*
+**/.claude/
+**/.codex/
+**/.continue/
+**/.cursor/
+**/.gemini/
+**/.github/
+**/.kiro/
+**/.reviews/
+**/.roo/
+**/.windsurf/

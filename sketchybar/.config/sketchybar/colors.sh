@@ -19,4 +19,19 @@ export SD_BG=$BAR_BG
 export SD_FG=$TEXT
 export SD_DARK_PURPLE=$PURPLE
 
+# Floating island bar
+export ISLAND_BG=0x000e101a
+export PILL_BG=0x59161829
+export PILL_BORDER=0x59444860
+
+# Icon colors at 60% opacity (icons read too bright at full alpha)
+export ICN_FG=0x99ebefc0
+export ICN_DIM=0x997a7d6e
+export ICN_BLUE=0x9900a3cb
+export ICN_GREEN=0x995dcd97
+export ICN_YELLOW=0x99e39500
+export ICN_RED=0x99e03600
+export ICN_INACTIVE=0x99444860
+
 export PLUGIN_DIR="$CONFIG_DIR/plugins"
+export ITEM_DIR="$CONFIG_DIR/items"

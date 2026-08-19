@@ -1,25 +1,26 @@
 #!/bin/bash
 
-PLUGIN_DIR="$CONFIG_DIR/plugins"
-
 source "$CONFIG_DIR/colors.sh"
+source "$CONFIG_DIR/icons.sh"
 
 sketchybar --bar \
   position=bottom \
-  height=46 \
-  color=$SD_BG \
-  border_color=$SD_DARK_PURPLE \
-  notch_width=200 \
-  margin=0 \
+  height=50 \
+  color=$ISLAND_BG \
+  border_width=0 \
+  shadow=on \
+  sticky=on \
+  margin=10 \
+  y_offset=4 \
+  corner_radius=9 \
   blur_radius=30 \
-  y_offset=0 \
-  padding_left=24 \
-  padding_right=24
+  padding_left=18 \
+  padding_right=18
 
 sketchybar --default \
   icon.font="JetBrainsMono Nerd Font Mono:Bold:14.0" \
   label.font="JetBrainsMono Nerd Font Mono:Medium:13.0" \
-  icon.color=$SD_FG \
+  icon.color=$ICN_FG \
   label.color=$SD_FG \
   icon.shadow.drawing=on \
   icon.shadow.color=0x60000000 \
@@ -37,33 +38,12 @@ sketchybar --default \
 
 sketchybar --add event aerospace_workspace_change
 
-for i in $(seq 1 8); do
-  sketchybar --add item space."$i" left \
-    --set space."$i" \
-    icon="$i" \
-    icon.padding_left=10 \
-    icon.padding_right=10 \
-    background.drawing=off \
-    script="$PLUGIN_DIR/space.sh" \
-    --subscribe space."$i" aerospace_workspace_change
-done
-
-sketchybar --add item front_app left \
-  --set front_app \
-  icon.drawing=off \
-  label.font="JetBrainsMono Nerd Font Mono:Bold:13.0" \
-  script="$PLUGIN_DIR/front_app.sh" \
-  --subscribe front_app front_app_switched
-
-sketchybar --add item clock center \
-  --set clock \
-  update_freq=30 \
-  script="$PLUGIN_DIR/clock.sh"
-
-sketchybar --add item battery right \
-  --set battery \
-  update_freq=120 \
-  script="$PLUGIN_DIR/battery.sh" \
-  --subscribe battery system_woke power_source_change
+source "$ITEM_DIR/spaces.sh"
+source "$ITEM_DIR/front_app.sh"
+source "$ITEM_DIR/spotify.sh"
+source "$ITEM_DIR/date.sh"
+source "$ITEM_DIR/clock.sh"
+source "$ITEM_DIR/battery.sh"
+source "$ITEM_DIR/cpu.sh"
 
 sketchybar --update
