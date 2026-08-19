@@ -1,3 +1,4 @@
 #!/bin/bash
 
-sketchybar --set "$NAME" label="$INFO"
+ICON=$("$PLUGIN_DIR/icon_map.sh" "$INFO")
+sketchybar --set "$NAME" icon="$ICON"

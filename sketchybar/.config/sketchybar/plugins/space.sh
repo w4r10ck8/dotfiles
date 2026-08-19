@@ -11,7 +11,7 @@ else
 fi
 
 if [ "$WS" = "$CURRENT" ]; then
-    ICON_COLOR=$ICN_RED
+    ICON_COLOR=$ICN_FG
 else
     ICON_COLOR=$ICN_INACTIVE
 fi
@@ -23,7 +23,7 @@ while IFS= read -r app; do
 done <<< "$(aerospace list-windows --workspace "$WS" --format '%{app-name}' 2>/dev/null)"
 
 if [ -n "$LABEL" ]; then
-    sketchybar --animate tanh 20 --set "$NAME" icon.color="$ICON_COLOR" label="$LABEL" label.drawing=on
+    sketchybar --animate tanh 20 --set "$NAME" icon.color="$ICON_COLOR" label="$LABEL" label.color="$ICON_COLOR" label.drawing=on
 else
     sketchybar --animate tanh 20 --set "$NAME" icon.color="$ICON_COLOR" label.drawing=off
 fi

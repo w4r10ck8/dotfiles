@@ -17,7 +17,7 @@ sketchybar --add item spotify center \
   --set spotify \
     update_freq=5 \
     icon="$SPOTIFY_NOTE" \
-    icon.font="SF Pro:Regular:14.0" \
+    icon.font="JetBrainsMono Nerd Font Mono:Regular:14.0" \
     icon.color=$ICN_BLUE \
     label.color=$TEXT \
     padding_left=2 \
