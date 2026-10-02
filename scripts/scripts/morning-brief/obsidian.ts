@@ -38,24 +38,26 @@ export function createDailyNote(): void {
 
 // ─── Read yesterday's work section ───────────────────────────────────────────
 
-function extractSection(content: string, sectionKeyword: string): Array<string> {
-  const lines = content.split('\n');
+function extractSection(lines: Array<string>, headingPrefix: string, sectionKeyword: string): Array<string> {
   let inSection = false;
   const result: Array<string> = [];
 
   for (const line of lines) {
-    if (line.startsWith('## ') && line.includes(sectionKeyword)) {
+    if (line.startsWith(headingPrefix) && line.includes(sectionKeyword)) {
       inSection = true;
       continue;
     }
-    if (inSection && line.startsWith('## ')) break;
+    if (inSection && line.startsWith(headingPrefix)) break;
     if (inSection) result.push(line);
   }
 
   return result;
 }
 
-export function readDailySection(date: Date, sectionKeyword: string): string | null {
+// "## Today's Work" contains a raw top bullet plus nested "### Code Reviewes" /
+// "### Notes / Decisions" subsections. This grabs the whole ## scope so callers
+// can split it further at the ### level.
+function getTodaysWorkScope(date: Date): Array<string> | null {
   const notePath = getDailyNotePath(date);
 
   if (!existsSync(notePath)) {
@@ -64,25 +66,39 @@ export function readDailySection(date: Date, sectionKeyword: string): string | n
   }
 
   const content = readFileSync(notePath, 'utf-8');
-  const lines = extractSection(content, sectionKeyword);
+  return extractSection(content.split('\n'), '## ', "Today's Work");
+}
+
+// Lines before the first "### " subheading — the raw ticket/investigation bullet.
+function getTodaysWorkTop(scope: Array<string>): Array<string> {
+  const idx = scope.findIndex(l => l.startsWith('### '));
+  return idx === -1 ? scope : scope.slice(0, idx);
+}
+
+// Reads a "### " subsection nested inside "## Today's Work" (Code Reviewes, Notes / Decisions).
+export function readTodaysWorkSubsection(date: Date, subsectionKeyword: string): string | null {
+  const scope = getTodaysWorkScope(date);
+  if (!scope) return null;
+
+  const lines = extractSection(scope, '### ', subsectionKeyword);
   const text = lines.join('\n').trim();
   return text.length > 0 ? text : null;
 }
 
 export function readTodaysWorkSection(date: Date): string | null {
-  return readDailySection(date, "Today's Work");
+  const scope = getTodaysWorkScope(date);
+  if (!scope) return null;
+
+  const text = getTodaysWorkTop(scope).join('\n').trim();
+  return text.length > 0 ? text : null;
 }
 
 export function readTodaysWorkLinks(date: Date): Array<string> {
-  const notePath = getDailyNotePath(date);
+  const scope = getTodaysWorkScope(date);
+  if (!scope) return [];
 
-  if (!existsSync(notePath)) return [];
-
-  const content = readFileSync(notePath, 'utf-8');
-  const lines = extractSection(content, "Today's Work");
   const links: Array<string> = [];
-
-  for (const line of lines) {
+  for (const line of getTodaysWorkTop(scope)) {
     const stripped = line.replace(/<!--.*?-->/g, ''); // strip HTML comments
     const matches = stripped.matchAll(/\[\[([^\]]+)\]\]/g);
     for (const match of matches) {
@@ -133,15 +149,45 @@ export async function generateStandupSummary(notes: Array<LinkedNote>): Promise<
 
   const prompt = `You are helping Jay prepare his daily standup update. Standups are short — the whole summary must be scannable in 30 seconds.
 
-Based on the work notes below, write a standup summary with these exact sections:
+Based on the work notes below, write a standup summary with these exact sections, each wrapped in its own Obsidian callout:
 
-✅ **Done**
-🚧 **In Progress**
-💬 **Discussions / Decisions** (omit if none)
-🚫 **Blockers**
+> [!success] Done
+> (bullets here)
+
+> [!info] In Progress
+> (bullets here)
+
+> [!question] Discussions / Decisions
+> (bullets here — omit whole callout if none)
+
+> [!warning] Blockers
+> (bullets here — write "None" if truly none, never omit the callout)
+
+If a "Code Review" work note is present, this is Jay reviewing OTHER people's PRs — not findings on his own code. Combine every reviewed PR into one callout, grouped by status:
+
+> [!tip] Code Reviews
+> - #PR-XXXX — **Approved**
+> - #PR-YYYY — **Pending**
+>     - reason it's still pending, if noted
+> - #PR-ZZZZ — **Changes Requested**
+>     - one-line summary of the review comment/notes left, if any
+
+Place the Code Reviews callout after Blockers. Omit it entirely if there's no Code Review note.
+
+Today's Work bullets use this rich checkbox syntax — map status by marker, not by reading English words:
+- [x] Done → Done
+- [/] In progress → In Progress
+- [ ] To do, [<] Scheduled, [>] Forwarded, [?] Question → In Progress if it's today's work not yet started, or Blockers if the bullet or its nested comment says it's waiting on someone/something
+- [-] Cancelled → drop entirely, do not report
+- Any other marker ([*], ["], [l], [b], [i], [S], [I], [p], [c], [f], [k], [w], [u], [d]) is an inline emphasis tag, not a status — keep the bullet's status from context and ignore the marker
+
+For Code Review bullets, the checkbox means review outcome, not task progress:
+- [x] → Approved
+- [ ] → Pending
+- [-] → Changes Requested / rejected
 
 Rules:
-- Infer Done vs In Progress from [x] / [ ] checkbox state.
+- A bullet often has nested lines underneath explaining why or adding detail — read those and fold the gist into the standup bullet (as the bullet itself if short, or one nested sub-bullet if it needs its own line). Don't just copy the checkbox label with no context.
 - Each top-level bullet: the core fact in ≤10 words. Ticket/PR IDs if present.
 - If a bullet genuinely needs more detail (e.g. multiple sub-tasks), add one level of nested bullets — each sub-bullet ≤8 words. Never nest otherwise.
 - Discussions: one line per decision already made. Include who confirmed it (bold name). No backstory.
@@ -160,6 +206,8 @@ Formatting rules (apply consistently):
 - Time estimates: bold — **~3-5 days**
 - UI labels and feature names that are exact strings: double quotes — "Pay Now", "View more info"
 - Nested bullet indentation: 4 spaces
+- Callout syntax: every line inside a callout, including nested bullets and blank lines between bullets, must start with "> " — a line without it breaks out of the callout in Obsidian
+- Blank line between each callout block (no "> " on that separating line)
 
 Work notes:
 ${notesText}`;

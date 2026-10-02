@@ -422,6 +422,7 @@ alias p.o="project_cd '$MUGGLEBORN_PROJECTS/operator' true"
 alias p.fwc="project_cd '$DEV_EXCO/my.fwc' true"
 alias p.ncp="project_cd '$DEV_EXCO/csp-npm/csp-npm' true"
 alias p.repair="project_cd '$DEV_EXCO/script-csp-repairo' true"
+alias p.team="project_cd '$DEV_EXCO/team.excopartners.com'"
 
 # Anoop's projects
 alias p.anoop="project_cd '$DEV_ANOOP' true"

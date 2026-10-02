@@ -72,6 +72,7 @@ Apps are auto-assigned to workspaces:
 - **3**: Finder/Preview
 - **4**: Obsidian
 - **5**: Browsers (Chrome, Arc)
+- **6**: Outlook
 - **7**: Media (Spotify, Music)
 - **8**: Communication (Messages, WhatsApp, Teams)
 

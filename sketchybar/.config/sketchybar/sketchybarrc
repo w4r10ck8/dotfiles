@@ -40,6 +40,7 @@ sketchybar --add event aerospace_workspace_change
 
 source "$ITEM_DIR/spaces.sh"
 source "$ITEM_DIR/front_app.sh"
+source "$ITEM_DIR/teams.sh"
 source "$ITEM_DIR/spotify.sh"
 source "$ITEM_DIR/date.sh"
 source "$ITEM_DIR/clock.sh"

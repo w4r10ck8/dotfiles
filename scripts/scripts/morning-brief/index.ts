@@ -20,7 +20,7 @@
 import {
   createDailyNote,
   readTodaysWorkSection,
-  readDailySection,
+  readTodaysWorkSubsection,
   readTodaysWorkLinks,
   readNoteContent,
   generateStandupSummary,
@@ -81,9 +81,14 @@ async function run(): Promise<void> {
     notes.push({ title: 'Daily Log', content: rawSection });
   }
 
-  const notesSection = readDailySection(prevWorkday, 'Notes / Decisions');
+  const notesSection = readTodaysWorkSubsection(prevWorkday, 'Notes / Decisions');
   if (notesSection) {
     notes.push({ title: 'Notes & Decisions', content: notesSection });
+  }
+
+  const codeReviewSection = readTodaysWorkSubsection(prevWorkday, 'Code Review');
+  if (codeReviewSection) {
+    notes.push({ title: 'Code Review', content: codeReviewSection });
   }
 
   for (const title of links) {

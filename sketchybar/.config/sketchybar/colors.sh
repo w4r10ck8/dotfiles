@@ -21,7 +21,7 @@ export SD_DARK_PURPLE=$PURPLE
 
 # Floating island bar
 export ISLAND_BG=0x000e101a
-export PILL_BG=0x59161829
+export PILL_BG=0xff161829
 export PILL_BORDER=0x59444860
 
 # Icon colors at 60% opacity (icons read too bright at full alpha)

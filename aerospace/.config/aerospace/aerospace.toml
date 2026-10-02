@@ -117,12 +117,6 @@ automatically-unhide-macos-hidden-apps = false
         'mode main'
     ]
 
-    # Toggle ChatGPT window to floating (C for ChatGPT)
-    c = [
-        'exec-and-forget aerospace list-windows --focused --app-bundle-id com.openai.chat --format %{window-id} | xargs -I {} aerospace layout --window-id {} floating',
-        'mode main'
-    ]
-
     # sticky is not yet supported https://github.com/nikitabobko/AeroSpace/issues/2
     #s = ['layout sticky tiling', 'mode main']
 
@@ -159,19 +153,19 @@ if.app-id = "com.mitchellh.ghostty"
 run = "move-node-to-workspace 1"
 
 # 2: AI Applications
-[[on-window-detected]]
-if.app-id = "com.openai.chat"
-run = "move-node-to-workspace 2"
+# [[on-window-detected]]
+# if.app-id = "com.openai.chat"
+# run = "move-node-to-workspace 2"
 
 # ChatGPT quick text box should float
 [[on-window-detected]]
 if.app-id = "com.openai.chat"
-if.window-title-regex-substring = "Quick|Input|Text|Prompt"
 run = "layout floating"
 
 [[on-window-detected]]
 if.app-id = "com.anthropic.claudefordesktop"
 run = "move-node-to-workspace 2"
+
 
 # 3: File Management (Finder, Preview, QuickTime)
 [[on-window-detected]]
@@ -212,6 +206,11 @@ run = "move-node-to-workspace 7"
 [[on-window-detected]]
 if.app-id = "com.spotify.client"
 run = "move-node-to-workspace 7"
+
+# 6: Outlook
+[[on-window-detected]]
+if.app-id = "com.microsoft.Outlook"
+run = "move-node-to-workspace 6"
 
 # 8: Communication (Messages, WhatsApp)
 [[on-window-detected]]
