@@ -10,12 +10,12 @@ sketchybar --bar \
   border_width=0 \
   shadow=on \
   sticky=on \
-  margin=10 \
+  margin=20 \
   y_offset=4 \
   corner_radius=9 \
   blur_radius=30 \
-  padding_left=18 \
-  padding_right=18
+  padding_left=0 \
+  padding_right=0
 
 sketchybar --default \
   icon.font="JetBrainsMono Nerd Font Mono:Bold:14.0" \
@@ -36,8 +36,7 @@ sketchybar --default \
   icon.padding_left=8 \
   icon.padding_right=4
 
-sketchybar --add event windows_change
-sketchybar --add event window_focus
+sketchybar --add event aerospace_workspace_change
 
 source "$ITEM_DIR/spaces.sh"
 source "$ITEM_DIR/front_app.sh"

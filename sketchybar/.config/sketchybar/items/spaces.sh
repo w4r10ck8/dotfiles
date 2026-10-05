@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Option+N key codes for native "Switch to Desktop N" (no yabai SA on macOS 27)
-KEYCODES=(0 18 19 20 21 23 22 26 28)
-
 for i in $(seq 1 8); do
   sketchybar --add item space."$i" left \
     --set space."$i" \
@@ -14,8 +11,8 @@ for i in $(seq 1 8); do
       label.drawing=off \
       background.drawing=off \
       script="$PLUGIN_DIR/space.sh" \
-      click_script="osascript -e 'tell application \"System Events\" to key code ${KEYCODES[$i]} using option down'" \
-    --subscribe space."$i" space_change windows_change mouse.clicked
+      click_script="aerospace workspace $i" \
+    --subscribe space."$i" aerospace_workspace_change mouse.clicked
 done
 
 sketchybar --add bracket spaces '/space\..*/' \
