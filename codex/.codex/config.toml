@@ -90,6 +90,7 @@ mac-menu-bar-enabled = true
 dictationDictionary = []
 confirm-before-close = "never"
 realtimeVoiceScreenContextEnabled = true
+appearanceTheme = "system"
 
 [desktop.appearanceDarkChromeTheme]
 accent = "#0995ab"

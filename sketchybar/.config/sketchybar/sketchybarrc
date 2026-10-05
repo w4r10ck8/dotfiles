@@ -23,10 +23,10 @@ sketchybar --default \
   icon.color=$ICN_FG \
   label.color=$SD_FG \
   icon.shadow.drawing=on \
-  icon.shadow.color=0x60000000 \
+  icon.shadow.color=$SHADOW \
   icon.shadow.distance=1 \
   label.shadow.drawing=on \
-  label.shadow.color=0x60000000 \
+  label.shadow.color=$SHADOW \
   label.shadow.distance=1 \
   background.drawing=off \
   padding_left=5 \
@@ -37,6 +37,12 @@ sketchybar --default \
   icon.padding_right=4
 
 sketchybar --add event aerospace_workspace_change
+
+# Reload on macOS light/dark switch so colors.sh re-picks the palette
+sketchybar --add event theme_change AppleInterfaceThemeChangedNotification \
+  --add item theme_watcher left \
+  --set theme_watcher drawing=off updates=on script="$PLUGIN_DIR/theme.sh" \
+  --subscribe theme_watcher theme_change
 
 source "$ITEM_DIR/spaces.sh"
 source "$ITEM_DIR/front_app.sh"

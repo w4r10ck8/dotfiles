@@ -1,3 +1,6 @@
+config-version = 2
+persistent-workspaces = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
+
 after-login-command = []
 after-startup-command = []
 exec-on-workspace-change = ['/bin/bash', '-c', 'sketchybar --trigger aerospace_workspace_change FOCUSED=$AEROSPACE_FOCUSED_WORKSPACE']
@@ -153,9 +156,15 @@ if.app-id = "com.mitchellh.ghostty"
 run = "move-node-to-workspace 1"
 
 # 2: AI Applications
-# [[on-window-detected]]
-# if.app-id = "com.openai.chat"
-# run = "move-node-to-workspace 2"
+# ChatGPT Classic main window (title "ChatGPT") tiles on 2
+[[on-window-detected]]
+if.app-id = "com.openai.chat"
+if.window-title-regex-substring = '^ChatGPT$'
+run = "move-node-to-workspace 2"
+
+[[on-window-detected]]
+if.app-id = "com.openai.codex"
+run = "move-node-to-workspace 2"
 
 # ChatGPT quick text box should float
 [[on-window-detected]]
