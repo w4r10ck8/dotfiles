@@ -26,7 +26,6 @@ brew bundle --file=brew/Brewfile
 
 Each directory follows GNU Stow conventions — files are placed relative to `$HOME`:
 
-- `aerospace/` → `~/.config/aerospace/` — AeroSpace tiling window manager (TOML config + shell scripts)
 - `brew/` → `~/` — Brewfile for all packages, casks, and VS Code extensions
 - `btop/` → `~/.config/btop/` — System monitor with spaceduck theme
 - `claude/` → `~/.claude/` — Claude Code settings, keybindings, and personal instructions
@@ -37,9 +36,11 @@ Each directory follows GNU Stow conventions — files are placed relative to `$H
 - `lazygit/` → `~/.config/lazygit/` — Lazygit config + `scripts/ai-commit.sh`
 - `nvim/` → `~/.config/nvim/` — Neovim (LazyVim-based) with Lua plugins
 - `planck/` → `~/` — Planck keyboard layouts (mac + ubuntu)
-- `sketchybar/` → `~/.config/sketchybar/` — macOS status bar with aerospace + clock + battery
+- `sketchybar/` → `~/.config/sketchybar/` — macOS status bar with yabai spaces + clock + battery
+- `skhd/` → `~/.config/skhd/` — skhd hotkeys driving yabai (mirrors old AeroSpace bindings)
 - `starship/` → `~/.config/` — Starship prompt (starship.toml)
 - `tmux/` → `~/.config/tmux/` — Tmux config + vendored plugins (tpm, minimal-tmux-status, tmux-sensible)
+- `yabai/` → `~/` — `.yabairc` tiling window manager (bsp, app→space rules, no scripting addition)
 - `zsh/` → `~/` — `.zshrc` with oh-my-zsh, fzf functions, project aliases
 
 ## Key Integrations
@@ -63,9 +64,9 @@ Current custom skills include:
 
 Do not track runtime files such as auth, logs, session history, sqlite databases, caches, or temp directories.
 
-### AeroSpace Workspace Layout
+### yabai Space Layout
 
-Apps are auto-assigned to workspaces:
+Apps are auto-assigned to macOS Spaces by `yabai -m rule` (8 desktops created by hand in Mission Control, labelled code/ai/files/notes/web/mail/media/chat). `alt-1..8` are native "Switch to Desktop N" shortcuts since yabai's scripting addition doesn't support macOS 27 yet. Don't native-fullscreen windows: it adds a Space and shifts every index.
 
 - **1**: Terminal/Editor (Ghostty, VSCode, iTerm2)
 - **2**: AI apps (ChatGPT, Claude)
@@ -76,13 +77,13 @@ Apps are auto-assigned to workspaces:
 - **7**: Media (Spotify, Music)
 - **8**: Communication (Messages, WhatsApp, Teams)
 
-`reset-workspaces.sh` is a helper script bound in aerospace service mode (`Alt+Shift+;` then `Shift+R`) to reassign all open windows back to their designated workspaces.
+Service mode (`Alt+Shift+;` then `Shift+R`) re-runs `yabai -m rule --apply` to send open windows back to their Spaces. Full bindings in `yabai-cheatsheet.md`.
 
 ### Sketchybar
 
 Bottom status bar (46px) with duckbones theme. Items:
 
-- Workspace indicators (1-8) synced with AeroSpace via workspace change events
+- Space indicators (1-8) synced with yabai via signals (`windows_change`, `window_focus`), plus stack position `N/M` next to the front app
 - Current app name (left)
 - Clock (center, 30s refresh)
 - Battery status (right, 120s refresh)
@@ -146,7 +147,8 @@ config.dotfiles  → open ~/dotfiles in nvim
 config.codex     → open codex config
 config.nvim      → open nvim config
 config.tmux      → open tmux config
-config.aerospace → open aerospace config
+config.yabai     → edit .yabairc
+config.skhd      → edit skhdrc
 config.starship  → open starship config
 config.ghostty   → open ghostty config
 config.lazygit   → open lazygit config

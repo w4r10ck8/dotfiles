@@ -199,7 +199,8 @@ alias config.codex="cd ~/.codex/ && nvim ."
 alias i.codex="cd ~/Library/Mobile\\ Documents/iCloud~md~obsidian/Documents/Codex/"
 alias config.nvim="cd ~/.config/nvim/ && nvim ."
 alias config.tmux="cd ~/.config/tmux/ && nvim ."
-alias config.aerospace="cd ~/.config/aerospace/ && nvim ."
+alias config.yabai="cd ~/ && nvim .yabairc"
+alias config.skhd="cd ~/.config/skhd/ && nvim skhdrc"
 alias config.starship="cd ~/.config/ && nvim starship.toml"
 alias config.ghostty="cd ~/.config/ghostty/ && nvim config"
 alias config.lazygit="cd ~/.config/lazygit/ && nvim config"
@@ -732,7 +733,8 @@ config.dotfiles    Open ~/dotfiles in nvim
 config.codex       Open codex config
 config.nvim        Open nvim config
 config.tmux        Open tmux config
-config.aerospace   Open aerospace config
+config.yabai       Edit .yabairc
+config.skhd        Edit skhdrc
 config.starship    Edit starship.toml
 config.ghostty     Edit ghostty config
 config.lazygit     Edit lazygit config

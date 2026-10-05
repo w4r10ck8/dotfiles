@@ -36,7 +36,8 @@ sketchybar --default \
   icon.padding_left=8 \
   icon.padding_right=4
 
-sketchybar --add event aerospace_workspace_change
+sketchybar --add event windows_change
+sketchybar --add event window_focus
 
 source "$ITEM_DIR/spaces.sh"
 source "$ITEM_DIR/front_app.sh"
