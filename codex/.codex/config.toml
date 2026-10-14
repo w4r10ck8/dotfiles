@@ -46,6 +46,9 @@ enabled = true
 [plugins."template-creator@openai-primary-runtime"]
 enabled = true
 
+[plugins."caveman@local"]
+enabled = true
+
 [projects."/Users/w4r10ck/Developer/exco-partners/my.fwc"]
 trust_level = "trusted"
 
@@ -83,14 +86,18 @@ toys-confetti-enabled = false
 appearanceDarkCodeThemeId = "codex"
 avatar-overlay-pet-visible = true
 selected-avatar-id = "pet_6abc66fc979c8191913f7f2f94be2c7b"
-avatar-overlay-mascot-width-px = 80
+avatar-overlay-mascot-width-px = 118
 defaultTerminalLocation = "bottom"
 notifications-sound = "default"
 mac-menu-bar-enabled = true
 dictationDictionary = []
 confirm-before-close = "never"
 realtimeVoiceScreenContextEnabled = true
-appearanceTheme = "system"
+appearanceTheme = "light"
+usePointerCursors = true
+appearanceDiffMarkerStyle = "color"
+dock-icon-preference = "codex-system"
+appearanceLightCodeThemeId = "codex"
 
 [desktop.appearanceDarkChromeTheme]
 accent = "#0995ab"
@@ -107,6 +114,21 @@ ui = 'ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Consolas, "Liberation Mo
 diffAdded = "#00a240"
 diffRemoved = "#e02e2a"
 skill = "#b06dff"
+
+[desktop.appearanceLightChromeTheme]
+accent = "#0995ab"
+accentSource = "custom"
+contrast = 80
+ink = "#111111"
+opaqueWindows = false
+surface = "#fcfcfc"
+
+[desktop.appearanceLightChromeTheme.fonts]
+
+[desktop.appearanceLightChromeTheme.semanticColors]
+diffAdded = "#00a240"
+diffRemoved = "#e02e2a"
+skill = "#751ed9"
 
 [mcp_servers.node_repl]
 args = []
@@ -125,16 +147,23 @@ NODE_REPL_INSTRUCTIONS_USE_CASE_BROWSER = ""
 NODE_REPL_INSTRUCTIONS_USE_CASE_CHROME = ""
 NODE_REPL_INSTRUCTIONS_USE_CASE_COMPUTER_USE = ""
 BROWSER_USE_CODEX_APP_BUILD_FLAVOR = "prod"
-BROWSER_USE_CODEX_APP_VERSION = "26.930.51102"
-NODE_REPL_TRUSTED_SERVICES = '{"browser":"/Users/w4r10ck/.codex/plugins/cache/openai-bundled/browser/26.930.51102/scripts/browser-service.mjs","sky":"@oai/sky/service"}'
+BROWSER_USE_CODEX_APP_VERSION = "26.1007.71326"
+NODE_REPL_TRUSTED_SERVICES = '{"browser":"/Users/w4r10ck/.codex/plugins/cache/openai-bundled/browser/26.1007.71326/scripts/browser-service.mjs","sky":"@oai/sky/service"}'
 SKY_CUA_SERVICE_PATH = "/Users/w4r10ck/.codex/computer-use/Codex Computer Use.app"
 CODEX_CLI_PATH = "/Applications/ChatGPT.app/Contents/Resources/codex-cli/CodexCLI.app/Contents/MacOS/codex"
 
 [hooks.state."ponytail@ponytail:hooks/claude-codex-hooks.json:session_start:0:0"]
-trusted_hash = "sha256:5f81d38f47448a1581c08ec877e044d9e04dd6f814dce3f2671f7a8edadd719b"
+trusted_hash = "sha256:55a39116e94ed8399271043701d3e9b8859aee77c30ef85529e7eab067d8acd9"
 
 [hooks.state."ponytail@ponytail:hooks/claude-codex-hooks.json:user_prompt_submit:0:0"]
-trusted_hash = "sha256:6a6f42bc3b58d6262db38bfd74d7f340fcca2b09cdb134aad365063f0bfefca4"
+trusted_hash = "sha256:29dcb3bf3cd3d77af301058521d2fd4e414c523345f8fe70942f7f30027acc94"
 
 [hooks.state."ponytail@ponytail:hooks/claude-codex-hooks.json:subagent_start:0:0"]
-trusted_hash = "sha256:1423b56c1322f96c8f74c51c1e7ae9a047b904c1fa43ee9165d462fd7a6e70ef"
+trusted_hash = "sha256:6e210f506560ddd14e490c7dd80623572d504b8f0cfcf8c64c4d4c2ab4d23ae1"
+
+[features]
+memories = true
+
+[memories]
+generate_memories = true
+use_memories = true

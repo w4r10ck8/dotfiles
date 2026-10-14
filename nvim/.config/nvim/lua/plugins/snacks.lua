@@ -20,6 +20,14 @@ return {
 				},
 			},
 		},
+		lazygit = {
+			-- xcodelight MatchParen fg is white, so borders/titles vanish
+			theme = {
+				activeBorderColor = { fg = "Directory", bold = true },
+				searchingActiveBorderColor = { fg = "Directory", bold = true },
+				inactiveBorderColor = { fg = "Comment" },
+			},
+		},
 		explorer = {
 			enabled = false,
 			replace_netrw = false,

@@ -48,6 +48,7 @@
   },
   "tui": "fullscreen",
   "skipWorkflowUsageWarning": true,
+  "theme": "light",
   "mcpServers": {
     "gmail": {
       "command": "gmail-mcp-server",

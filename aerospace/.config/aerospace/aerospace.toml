@@ -3,7 +3,7 @@ persistent-workspaces = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
 
 after-login-command = []
 after-startup-command = []
-exec-on-workspace-change = ['/bin/bash', '-c', 'sketchybar --trigger aerospace_workspace_change FOCUSED=$AEROSPACE_FOCUSED_WORKSPACE']
+exec-on-workspace-change = ['/bin/bash', '-c', 'echo "$AEROSPACE_PREV_WORKSPACE $AEROSPACE_FOCUSED_WORKSPACE" > /tmp/aerospace-last-ws-change; sketchybar --trigger aerospace_workspace_change FOCUSED=$AEROSPACE_FOCUSED_WORKSPACE']
 start-at-login = true 
 
 # Normalizations. See: https://nikitabobko.github.io/AeroSpace/guide#normalization
@@ -162,11 +162,11 @@ if.app-id = "com.openai.chat"
 if.window-title-regex-substring = '^ChatGPT$'
 run = "move-node-to-workspace 2"
 
+# ChatGPT (now com.openai.codex): main window tiles on 2, quick chat floats where you are
 [[on-window-detected]]
 if.app-id = "com.openai.codex"
-run = "move-node-to-workspace 2"
+run = "exec-and-forget ~/.config/aerospace/chatgpt-window.sh"
 
-# ChatGPT quick text box should float
 [[on-window-detected]]
 if.app-id = "com.openai.chat"
 run = "layout floating"
